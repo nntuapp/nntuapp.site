@@ -1,0 +1,791 @@
+@font-face {
+    font-family: 'regular';
+    src: url("SFProDisplay-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'itallic';
+    src: url("SFProDisplay-RegularItalic.ttf");
+}
+
+
+@font-face {
+    font-family: 'semibold';
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    src: url("SFProDisplay-Semibold.ttf");
+}
+
+@font-face {
+    font-family: 'heavy';
+    src: url("SFProDisplay-Heavy.ttf");
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.mainInterface{
+    transition: filter 0.5s, -webkit-filter 0.5s;
+}
+
+.blueCell {
+    background: #006CB2;
+    box-sizing: border-box;
+    border-radius: 10px;
+    max-width: 300px;
+    padding: 3px;
+    display: table-cell;
+
+    /* margin-top: 5px; */
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+
+    cursor:pointer;
+
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 3px rgba(#006CB2);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    transition: filter 0.5s, transform 0.3s;
+}
+.blueCell:hover, .blueCell:focus, .blueCell:active{
+    -webkit-transform: scale(1.03);
+    transform: scale(1.03);
+}
+
+.redCell {
+    background: #CD2D09;
+    box-sizing: border-box;
+    border-radius: 10px;
+    max-width: 300px;
+    padding: 3px;
+    display: table-cell;
+
+    /* margin-top: 5px; */
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+
+    cursor:pointer;
+
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 3px rgba(#CD2D09);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    transition: filter 0.5s, transform 0.3s;
+}
+.redCell:hover, .redCell:focus, .redCell:active{
+    -webkit-transform: scale(1.03);
+    transform: scale(1.03);
+}
+
+.purpleCell {
+    background: #160947;
+    box-sizing: border-box;
+    border-radius: 10px;
+    max-width: 300px;
+    padding: 3px;
+    display: table-cell;
+
+    /* margin-top: 5px; */
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+
+    cursor:pointer;
+
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 3px rgba(#160947);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    transition: filter 0.5s, transform 0.3s;
+}
+.purpleCell:hover, .purpleCell:focus, .purpleCell:active{
+    -webkit-transform: scale(1.03);
+    transform: scale(1.03);
+}
+
+.table {
+    display: inline-flex;
+}
+
+.numbersCol {
+    display:flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    min-height: 85px;
+    width: 45px;
+    border-collapse: collapse;
+}
+
+.dataPlace {
+    display:block;
+    box-sizing:border-box;
+    background: #fff;
+    border-radius: 7px;
+    margin-left: 10px;
+    padding: 10px;
+}
+
+.time{
+    box-sizing: border-box;
+    text-align: end;
+    color: #fff;
+    font-family: 'semibold';
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.room{
+    box-sizing: border-box;
+    text-align: end;
+    color: #fff;
+    font-family: 'semibold';
+    font-size: 16px;
+    margin-top: auto;
+}
+
+.blueTitle{
+    box-sizing: border-box;
+    max-width: 213px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color: #006CB2;
+    font-family: 'heavy';
+    font-size: 21px;
+}
+
+.redTitle{
+    box-sizing: border-box;
+    width: 213px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color: #CD2D09;
+    font-family: 'heavy';
+    font-size: 21px;
+}
+
+.purpleTitle{
+    box-sizing: border-box;
+    width: 213px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color: #160947;
+    font-family: 'heavy';
+    font-size: 21px;
+}
+
+.teacherLabel{
+    box-sizing: border-box;
+    width: 213px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-family: 'regular';
+    font-size: 16px;
+}
+
+.noteLabel{
+    box-sizing: border-box;
+    width: 213px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-family: 'itallic';
+    font-size: 14px;
+}
+
+.weekNTypeLabel{
+    box-sizing: border-box;
+    width: 213px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-family: 'semibold';
+    font-variant-caps: inherit;
+    font-size: 16px;
+}
+
+.header{
+    overflow:auto;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 50px;
+}
+
+.title{
+    display: inline-block;
+    font-family: 'heavy';
+    font-weight: normal;
+    font-size: 32px;
+    cursor: default;
+}
+
+.manipulators{
+    float: right;
+    /* background: yellow; */
+    display: flex;
+}
+
+.addButton{
+    background: none;
+    border: none;
+    cursor:pointer;
+}
+
+.shareButton {
+    background: none;
+    border: none;
+    margin-left: 30px;
+    cursor:pointer;
+}
+
+.days{
+    margin-top: 20px;
+    overflow-x: scroll;
+}
+
+h2{
+    font-variant-caps: all-small-caps;
+    font-size: 16px;
+    font-family: 'semibold';
+    font-weight: normal;
+    color: #8A8A8A;
+    cursor: default;
+}
+
+.daysContent{
+    display: flex;
+    box-sizing: border-box;
+    align-content: center;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 5px;
+}
+
+/* .daysContent:after{
+    content: "";
+    display: table;
+    clear: both;
+} */
+
+.singleDay{
+    display: block;
+    box-sizing: border-box;
+    margin-right: 15px;
+    float: left;
+    width: 300px;
+}
+
+
+/* CSS попапа с группой */
+
+.popupBackground{
+    display: flex;
+    visibility: hidden;
+    position: fixed;
+    align-items: center;
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: transparent;
+    z-index: 2;
+    background-color: rgb(0, 0, 0, 0.1);
+
+    filter: blur(20px);
+    -webkit-filter: blur(20px);
+
+    transition: visibility 0.2s, filter 0.5s, -webkit-filter 0.5s;
+}
+
+.groupPopup{
+    padding: 20px;
+    box-sizing: border-box;
+    display: block;
+    text-align: center;
+    border-radius: 15px;
+    background-color: white;
+    margin: auto;
+    width: 300px;
+}
+
+.question{
+    font-family: 'semibold';
+    font-size: 1.2em;
+}
+
+.groupField {
+    font-family: 'regular';
+    border: none;
+    border-color: transparent;
+    background-color: #eeeeee;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.2em;
+    resize: none;
+    width: 100%;
+    height: 1.2em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    cursor:text;
+}
+
+.okButton{
+    font-family: 'regular';
+    font-size: 1em;
+    padding: 7px;
+    border: none;
+    border-color: transparent;
+    border-radius: 10px;
+    color: white;
+    background-color: #3196da;
+    /* min-width: 70px; */
+    min-width: 100%;
+    cursor:pointer;
+}
+
+.groupLabel{
+    box-sizing: border-box;
+    border: none;
+    background: none;
+    align-self: flex-start;
+    font-family: 'regular';
+    cursor:pointer;
+}
+
+
+
+/* CSS попапа отдельного редактора */
+.singleEditorBackground{
+    display: flex;
+    visibility: hidden;
+    position: fixed;
+    align-items: center;
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: transparent;
+    z-index: 2;
+    background-color: rgb(0, 0, 0, 0.1);
+
+    filter: blur(20px);
+    -webkit-filter: blur(20px);
+
+    transition: visibility 0.2s, filter 0.6s, -webkit-filter 0.6s;
+}
+
+.singleEditorPopup{
+    display: block;
+    padding: 20px;
+    box-sizing: border-box;
+    display: block;
+    text-align: start;
+    border-radius: 15px;
+    background-color: white;
+    margin: auto;
+    max-width: 500px;
+    overflow-y: auto;
+}
+
+.lessonNameField{
+    font-family: 'heavy';
+    border: none;
+    outline: none;
+    border-color: transparent;
+    background: none;
+    text-align: start;
+    font-size: 1.5em;
+    height: 1.5em;
+    resize: none;
+    width: 100%;
+    cursor:text;
+}
+
+.singleEditorField{
+    font-family: 'semibold';
+    border: none;
+    outline: none;
+    border-color: transparent;
+    background: none;
+    text-align: start;
+    font-size: 1.3em;
+    height: 1.3em;
+    resize: none;
+    width: 100%;
+    cursor:text;
+}
+
+.singleEditorSegmentLabel{
+    font-family: 'semibold';
+    font-variant-caps: all-small-caps;
+    color: #8A8A8A;
+    font-size: 0.9em;
+    margin-top: 5px;
+    cursor: default;
+}
+
+.lilInfo{
+    font-family: 'regular';
+    color: #8A8A8A;
+    font-size: 0.7em;
+    margin-top: -7px;
+    cursor: default;
+}
+
+.lilButtons{
+    overflow: hidden;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    display: flex;
+    height: 2.3em;
+}
+
+.lilButtons:hover{
+    overflow:auto;
+}
+
+.optionalField{
+    display: block;
+    box-sizing: border-box;
+    font-family: 'regular';
+    border: none;
+    min-width: 150px;
+    border-color: transparent; 
+    background-color: #eeeeee;
+    border-radius: 7px;
+    font-size: 0.95em;
+    resize: none;
+    padding: 7px;
+    cursor:text;
+}
+
+.lilButton{
+    box-sizing: border-box;
+    font-family: 'regular';
+    font-size: 0.95em;
+    background-color: #eeeeee;
+    border: none;
+    border-radius: 7px;
+    padding: 7px;
+    margin-right: 5px;
+    
+
+    transition: background-color 0.2s;
+    cursor:pointer;
+
+    /* -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 3px rgba(#006CB2);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform;
+    transition-property: transform; */
+}
+/* .lilButton:hover, .lilButton:focus, .lilButton:active{
+    -webkit-transform: scale(1.05);
+    transform: scale(1.);
+} */
+
+.timeButtons{
+    box-sizing: border-box;
+    display: flex;
+    overflow: auto;
+    border-radius: 7px;
+    padding-bottom: 3px;
+
+    transition: overflow-x 1s;
+}
+
+/* .timeButtons:hover{
+    overflow: auto;
+} */
+
+.timeButton{
+    box-sizing: border-box;
+    display: block;
+    background-color: #eeeeee;
+    border: none;
+    border-radius: 7px;
+    padding: 7px;
+    width: 55px;
+    font-family: 'semibold';
+    text-align: center;
+    margin-right: 5px;
+    transition: background-color 0.2s;
+    cursor:pointer;
+}
+
+.line {
+    width: 10px;
+    height: 1px;
+    background-color: #000;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.lessonTitle{
+    font-family: 'regular';
+    font-size: 0.7em;
+    margin-bottom: 3px;
+}
+
+.customTime{
+    display: flex;
+    background-color: #eeeeee;
+    border: none;
+    border-radius: 7px;
+    padding: 7px;
+}
+
+.customTimeLabel {
+    font-family: 'regular';
+    font-variant-caps: all-small-caps;
+}
+
+.customTimeField{
+    display: block;
+    outline: none;
+    box-sizing: border-box;
+    font-family: 'semibold';
+    width: 70px;
+    font-size: 1.2em;
+    height: 2em;
+    border: none;
+    border-color: transparent; 
+    background-color:  #eeeeee;
+    resize: none;
+    cursor: text;
+}
+
+.actionButtons{
+    margin-top: 10px;
+    width: 100%;
+    display: block;
+}
+
+.deleteButton{
+    float: right;
+    width: 49%;
+    background-color: red;
+    color: white;
+    box-sizing: border-box;
+    font-family: 'regular';
+    font-size: 0.95em;
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    cursor:pointer;
+}
+
+.saveButton{
+    background-color: #006CB2;
+    width: 49%;
+    color: white;
+    box-sizing: border-box;
+    font-family: 'regular';
+    font-size: 0.95em;
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    cursor:pointer;
+}
+
+/* CSS алерта об ошибке */
+.alertBackground{
+    display: flex;
+    visibility: hidden;
+    position: fixed;
+    align-items: center;
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: transparent;
+    z-index: 3;
+    background-color: rgb(0, 0, 0, 0.1);
+
+    filter: blur(20px);
+    -webkit-filter: blur(20px); 
+
+    transition: visibility 0.2s, filter 0.5s, -webkit-filter 0.5s;
+}
+
+.alertPopup{
+    padding: 20px;
+    box-sizing: border-box;
+    display: block;
+    text-align: center;
+    border-radius: 15px;
+    background-color: white;
+    margin: auto;
+}
+
+.description{
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-family: 'regular';
+    font-size: 0.9em;
+    cursor: default;
+}
+
+/* CSS попапа с кодом */
+.codePopupBackground{
+    display: flex;
+    visibility: hidden;
+    position: fixed;
+    align-items: center; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: transparent;
+    z-index: 2;
+    background-color: rgb(0, 0, 0, 0.1);
+
+    /* filter: blur(20px);
+    -webkit-filter: blur(20px);  */
+
+    transition: visibility 0.2s, filter 0.5s, -webkit-filter 0.5s;
+}
+
+.popupContainer{
+    box-sizing: border-box;
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+
+
+
+.codePopup{
+    max-width: 350px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: block;
+    text-align: center;
+    border-radius: 15px;
+    background-color: white;
+}
+
+.contactButtons{
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.vkButton{
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
+    font-family: 'regular';
+    font-size: 1em;
+    padding: 7px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    color: #3196da;
+    cursor:pointer;
+}
+
+.emailButton{
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+    font-family: 'regular';
+    font-size: 1em;
+    padding: 7px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    color: #3196da;
+    cursor:pointer;
+}
+
+.codePopupButtons{
+    width: 100%;
+    display: flex;
+}
+
+.postTTbutton{
+    font-family: 'regular';
+    box-sizing: border-box;
+    font-size: 1em;
+    padding: 7px;
+    border: none;
+    border-color: transparent;
+    border-radius: 10px;
+    color: white;
+    background-color: #3196da;
+    min-width: 48%;
+    cursor:pointer;
+}
+
+.dismissCodeAlertButton{
+    font-family: 'regular';
+    box-sizing: border-box;
+    font-size: 1em;
+    padding: 7px;
+    border: none;
+    border-color: transparent;
+    border-radius: 10px;
+    color: white;
+    background-color: red;
+    min-width: 48%;
+    cursor:pointer;
+    margin-left: auto;
+}
+
+.weekChangers{
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 5px;
+    background-color: #F9F9F9;
+    border-radius: 10px;
+}
+
+.weekButton{
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.weekLabel{
+    font-family: 'semibold';
+    padding-left: 30px;
+    padding-right: 30px;
+    font-size: 1em;
+    cursor: default;
+}
+
+.editButton{
+    box-sizing: border-box;
+    padding:10px;
+    align-items: center;
+    background-color: #F9F9F9;
+    border: none;
+    border-radius: 10px;
+    margin-left: 20px;
+    cursor: pointer;
+}

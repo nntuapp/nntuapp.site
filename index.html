@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="editor/style.css">
+    <link rel="shortcut icon" href="editor/viewer_icon.png" type = "image/png">
+    <title>Расписание (бета)</title>
+    <script src="viewerAlgorythm.js"></script>
+    <script src="editor/keys.js"></script>
+</head>
+<body>
+    <div id = 'haha' class = 'popupBackground'>
+        <div class = 'groupPopup'>
+            <div class = 'question'>Введите название группы</div>
+            <input type = 'text' id = 'groupField' class = 'groupField' placeholder="Например, 19-САИ"/>
+            <button class = 'okButton' onclick="applyGroup()">ОК</button>
+        </div>
+    </div>
+    
+    <div id = 'mainInterface' class="mainInterface">
+        <div class='header'>
+            <div class='title'">Расписание</div> 
+            <div class='manipulators'>
+                <div class = 'weekChangers'>
+                    <button class = 'weekButton' onclick="prevWeek()"> <img src="editor/prevWeek.svg"/></button>
+                    <div class = 'weekLabel' id = 'weekLabel'>1 неделя</div>
+                    <button class = 'weekButton' onclick="nextWeek()"> <img src="editor/nextWeek.svg"/> </button>
+                </div>
+                <button class = 'editButton' onclick="openEditor()"><img src="editor/editButton.svg"/> </button>
+            </div>
+            <div id = 'groupLabel' class = 'groupLabel' onclick="askGroup()">Группа:</div>
+        </div>
+        <div class='days'>
+            <div class='daysContent'>
+                <div class ='singleDay'>
+                    <h2>Понедельник</h2>
+                    <cell id='day0' class='lessonCell'/>
+                </div>
+    
+                <div class ='singleDay'>
+                    <h2>Вторник</h2>
+                    <cell id='day1' class='lessonCell'/>
+                </div>
+    
+                <div class ='singleDay'>
+                    <h2>Среда</h2>
+                    <cell id='day2' class='lessonCell'/>
+                </div>
+    
+                <div class ='singleDay'>
+                    <h2>Четверг</h2>
+                    <cell id='day3' class='lessonCell'/>
+                </div>
+    
+                <div class ='singleDay'>
+                    <h2>Пятница</h2>
+                    <cell id='day4' class='lessonCell'/>
+                </div>
+    
+                <div class ='singleDay'>
+                    <h2>Суббота</h2>
+                    <cell id='day5' class='lessonCell'/>
+                </div>
+    
+                <div class ='singleDay'>
+                    <h2>Воскресенье</h2>
+                    <cell id='day6' class='lessonCell'/>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

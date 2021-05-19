@@ -1,0 +1,862 @@
+var tt = [];
+
+var blurred = false;
+var userGroup = '';
+var uploading = false;
+
+const days = ['day0','day1', 'day2', 'day3', 'day4', 'day5', 'day6'];
+const startLabelsSE = ['start0','start1','start2','start3','start4','start5','start6'];
+const stopLabelsSE = ['stop0','stop1','stop2','stop3','stop4','stop5','stop6'];
+const borderlines = ['line0','line1','line2','line3','line4','line5','line6'];
+const timeTitles = ['title0','title1','title2','title3','title4','title5','title6'];
+const timeCards = ['time0','time1','time2','time3','time4','time5','time6'];
+
+const weekDays = ['wday0','wday1', 'wday2', 'wday3', 'wday4', 'wday5', 'wday6'];
+
+const mainStartTimes = ["7:30", "9:20", "11:10", "13:15", "15:00", "16:45", "18:30", "20:15"];
+const mainStopTimes = ["9:05", "10:55", "12:45", "14:50", "16:35", "18:20", "20:05", "21:50"];
+const sStartTimes = ["8:00", "9:45", "11:35", "13:40", "15:25", "17:10", "18:55", "20:40"];
+const sStopTimes = ["9:35", "11:20", "13:10", "15:15", "17:00", "18:45", "20:30", "22:15"];
+
+const messages = ['Укажите название занятия 😳', 'Укажите день занятия 📆', 'Укажите тип занятия ☝️', 'Укажите время занятия ⏰', 'Укажите время занятия ⏰', 'Неверный код 😭', 'Расписание загружено на сервер 🥳', 'Проблемы с подключением 😬'];
+
+const descriptions = ['Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Проверьте правильность введённого кода', 'Вы поделились этим расписанием. Ура!', 'Проверьте своё подключение к интернету'];
+
+Array.prototype.remove = function() {
+    var what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
+
+var tempLessonIndex = -1
+
+class Lesson {
+    constructor(startTime, stopTime, day, weeks, rooms, name, type, teacher, note) {
+        this.startTime = startTime;
+        this.stopTime = stopTime;
+        this.day = day;
+        this.weeks = weeks;
+        this.rooms = rooms;
+        this.name = name;
+        this.type = type;
+        this.teacher = teacher;
+        this.note = note;
+    };
+
+    emptyFill(){
+        this.startTime = '';
+        this.stopTime = '';
+        this.day = -1;
+        this.weeks = [];
+        this.rooms = [];
+        this.name = '';
+        this.type = '';
+        this.teacher = '';
+        this.note = '';
+    }
+
+    get stringRooms(){
+        return this.rooms.join(', ');
+    };
+
+    get stringWeeks(){
+        var output = '';
+        var tempWeeks = [...this.weeks];
+        if (tempWeeks.includes(-2)){
+            output += '<span style="color: #006CB2">ЧН</span>';
+            var index = tempWeeks.indexOf(-2);
+            tempWeeks.splice(index, 1);
+        };
+        if (tempWeeks.includes(-1)){
+            if (output.length > 0){
+                output += ' + ';
+            }
+            var index = tempWeeks.indexOf(-1);
+            tempWeeks.splice(index, 1);
+            output += '<span style="color: #CD2D09">НЧ</span>';
+        }
+        if (tempWeeks.length > 0) {
+            if (output.length > 0){
+                output += ' + ';
+            }
+            output += tempWeeks.join(', ');
+            if (tempWeeks.length > 1){
+                output += ' НЕДЕЛИ';
+            } else {output += ' НЕДЕЛЯ';}
+        }
+        return output;
+    };
+}
+
+function getGroup(cookiename = 'group') {
+    var results = document.cookie.match ( '(^|;) ?' + cookiename + '=([^;]*)(;|$)' );
+    if ( results )
+      return ( decodeURIComponent(results[2] ) );
+    else
+      return null;
+}
+
+
+function saveGroup(group) {
+    document.cookie = "group=" + encodeURIComponent(group);
+}
+  
+
+function getCard(lesson, lessonIndex){
+    if (lesson.weeks.includes(-1) && lesson.weeks.includes(-2)){
+        return `<p><div class = "purpleCell" onclick = "editExistingOne(tt[${lessonIndex}], ${lessonIndex})">
+            <div class = "table">
+                <div class="numbersCol">
+                    <div class = "time">${lesson.startTime}<br>––<br>${lesson.stopTime}</div>
+                    <div class = "room">${lesson.stringRooms}</div>
+                </div>
+                <div class = "dataPlace">
+                    <div class = "purpleTitle">${lesson.name}</div>
+                    <div class = "teacherLabel">${lesson.teacher}</div>
+                    <div class = "noteLabel">${lesson.note}</div>
+                    <div class = "weekNTypeLabel">${lesson.stringWeeks}, ${lesson.type.toUpperCase()}</div>
+                </div>
+            </div>
+        </div> </p>`;
+    } else if (lesson.weeks.includes(-2)) {
+        return `<p><div class = "blueCell" onclick = "editExistingOne(tt[${lessonIndex}], ${lessonIndex})">
+            <div class = "table">
+                <div class="numbersCol">
+                    <div class = "time">${lesson.startTime}<br>––<br>${lesson.stopTime}</div>
+                    <div class = "room">${lesson.stringRooms}</div>
+                </div>
+                <div class = "dataPlace">
+                    <div class = "blueTitle">${lesson.name}</div>
+                    <div class = "teacherLabel">${lesson.teacher}</div>
+                    <div class = "noteLabel">${lesson.note}</div>
+                    <div class = "weekNTypeLabel">${lesson.stringWeeks}, ${lesson.type.toUpperCase()}</div>
+                </div>
+            </div>
+        </div> </p>`;
+    } else if (lesson.weeks.includes(-1)){
+        return `<p><div class = "redCell" onclick = "editExistingOne(tt[${lessonIndex}], ${lessonIndex})">
+            <div class = "table">
+                <div class="numbersCol">
+                    <div class = "time">${lesson.startTime}<br>––<br>${lesson.stopTime}</div>
+                    <div class = "room">${lesson.stringRooms}</div>
+                </div>
+                <div class = "dataPlace">
+                    <div class = "redTitle">${lesson.name}</div>
+                    <div class = "teacherLabel">${lesson.teacher}</div>
+                    <div class = "noteLabel">${lesson.note}</div>
+                    <div class = "weekNTypeLabel">${lesson.stringWeeks}, ${lesson.type.toUpperCase()}</div>
+                </div>
+            </div>
+        </div> </p>`;
+    } else {
+        return `<p><div class = "purpleCell" onclick = "editExistingOne(tt[${lessonIndex}], ${lessonIndex})">
+            <div class = "table">
+                <div class="numbersCol">
+                    <div class = "time">${lesson.startTime}<br>––<br>${lesson.stopTime}</div>
+                    <div class = "room">${lesson.stringRooms}</div>
+                </div>
+                <div class = "dataPlace">
+                    <div class = "purpleTitle">${lesson.name}</div>
+                    <div class = "teacherLabel">${lesson.teacher}</div>
+                    <div class = "noteLabel">${lesson.note}</div>
+                    <div class = "weekNTypeLabel">${lesson.stringWeeks}, ${lesson.type.toUpperCase()}</div>
+                </div>
+            </div>
+        </div> </p>`;
+    }
+}
+
+// function randomInteger(min, max) {
+//   return Math.floor(min + Math.random() * (max + 1 - min));
+// }
+
+// function cards(){
+//     var test = new Lesson('9:00', '10:30', 5, [randomInteger(-2,-1)], ['3214'], 'Математический анализ', 'Практика' ,'Моисеев Антон Евгеньевич', 'супер заметка')
+//     document.getElementById("cards").innerHTML += getCard(test)
+// }
+
+// function addCardToMonday(){
+//     let days = ['day0','day1', 'day2', 'day3', 'day4', 'day5', 'day6'];
+//     var test = new Lesson('9:30', '10:30', 5, [randomInteger(-2,-1)], ['3214'], 'Структуры данных', 'Практика' ,'Моисеев Антон Евгеньевич', 'пока лучше ничего не было')
+
+//     for (i = 0; i < days.length; i++){
+//         test.weeks = [randomInteger(-2,-1)]
+//         document.getElementById(days[i]).innerHTML += getCard(test)
+//     }
+    
+//     // // document.getElementById("day0").innerHTML += 'haha <br>'
+    
+//     // document.getElementById("day1").innerHTML += getCard(test)
+//     // // document.getElementById("day1").innerHTML += 'haha <br>'
+//     // test.weeks = [randomInteger(-2,-1)]
+//     // document.getElementById("day2").innerHTML += getCard(test)
+// }
+
+function weeksFromString(input){
+    var weeks = [];
+    var tempString = input.replaceAll(' ', '');
+    while (tempString.includes(',')){
+        var index = tempString.indexOf(',');
+        try {
+            let tempWeek = parseInt(tempString.slice(0, index));
+            if (!isNaN(tempWeek)){
+                weeks.push(tempWeek);
+            }
+        } catch {
+            console.log('Ошибка в обработке недель');
+        }
+        tempString = tempString.slice(index + 1);
+    }
+    var left = 0;
+    try {
+        left = parseInt(tempString);
+        if (isNaN(left)){left = 0;}
+    } catch {
+        left = 0;
+    }
+    if (left != 0) {
+        weeks.push(left);
+    }
+    return weeks;
+}
+
+function stringFromWeeks(weeks){
+    return weeks.join(', ');
+}
+
+function stringFromRooms(rooms){
+    return rooms.join(', ');
+}
+
+function cleanUpString(input){
+    if (input == '' || input == ' ') {return input;}
+    var output = input;
+    while (output.charAt(0) == ' '){
+        output = output.slice(1);
+    }
+    while (output.charAt(output.length - 1) == ' ' && output != ' '){
+        output = output.slice(0, output.length - 2);
+    }
+    return output
+}
+
+function roomsFromString(input){
+    var rooms = [];
+    tempString = cleanUpString(input);
+    while (tempString.includes(',')){
+        var index = tempString.indexOf(',');
+        try {
+            rooms.push(cleanUpString(tempString.slice(0, index)));
+        } catch {
+            console.log('Ошибка в обработке аудиторий');
+        }
+        tempString = tempString.slice(index + 1);
+    }
+    if (tempString != '') {
+        rooms.push(cleanUpString(tempString));
+    }
+    return rooms;
+}
+
+function estTimeFromString(input){
+    var tempString = input.replaceAll(':', '');
+    tempString = tempString.replaceAll(' ', '');
+    tempString = tempString.replaceAll(';', '');
+    tempString = tempString.replaceAll(',', '');
+    return parseInt(tempString);
+}
+
+function fillIn(){
+    tt.sort(function(a,b){
+        var startA = estTimeFromString(a.startTime);
+        var startB = estTimeFromString(b.startTime);
+        if (startA > startB){
+            return 1;
+        } else if (startA < startB){    
+            return -1;
+        }
+        else return 0;
+    });
+    for (i = 0; i < days.length; i++){
+        document.getElementById(days[i]).innerHTML = '';
+    }
+    for (i = 0; i < tt.length; i++){
+        // console.log(tt[i].weeks);
+        document.getElementById(days[tt[i].day]).innerHTML += getCard(tt[i], i);
+    }
+}
+
+function loadTT(group = userGroup){
+    var request = new XMLHttpRequest();
+    var data = JSON.stringify({
+        key: receiveKey,
+        groupName: group
+    });
+
+    request.open("POST", address, true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.onreadystatechange = function(){
+        if (this.readyState === XMLHttpRequest.DONE){
+            tt = [];
+        downloadedTT = JSON.parse(this.responseText);
+        for (i = 0; i < downloadedTT.days.length; i++){
+            tt.push(new Lesson(downloadedTT.startTimes[i], downloadedTT.stopTimes[i], downloadedTT.days[i], weeksFromString(downloadedTT.weeks[i]), roomsFromString(downloadedTT.rooms[i]), downloadedTT.names[i], downloadedTT.types[i], downloadedTT.teachers[i], downloadedTT.notes[i]));
+        }
+        // console.log(tt);
+        fillIn();
+        }
+    };
+    request.send(data);
+}
+
+function updateGroupLabel(group){
+    document.getElementById('groupLabel').innerHTML = `Группа: ${group}`;
+}
+
+
+function showGroupPopup(active){
+    if (active){
+        // document.getElementById('haha').style.display = 'flex';
+        document.getElementById('haha').style.visibility = 'visible';
+        document.getElementById('haha').style.filter = 'none';
+        document.getElementById('haha').style.webkitFilter = 'none';
+    } else {
+        document.getElementById('haha').style.filter = 'blur(20px)';
+        document.getElementById('haha').style.webkitFilter = 'blur(20px)';
+        // document.getElementById('haha').style.display = 'none';
+        document.getElementById('haha').style.visibility = 'hidden';
+    }
+}
+
+function blurCards(cardsArray, blur){
+    for (i = 0; i < cardsArray.length; i++){
+        if (blur){
+            cardsArray[i].style.filter = 'blur(8px)'
+        } else {
+            cardsArray[i].style.filter = 'none'
+        }
+    }
+}
+
+
+function blurMainInterface(active){
+    if (active){
+        document.getElementById('mainInterface').style.filter = 'blur(8px)';
+        document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+        blurCards(document.getElementsByClassName('blueCell'), true);
+        blurCards(document.getElementsByClassName('redCell'), true);
+        blurCards(document.getElementsByClassName('purpleCell'), true);
+    } else {
+        document.getElementById('mainInterface').style.filter = 'none';
+        document.getElementById('mainInterface').style.webkitFilter = 'none';
+        blurCards(document.getElementsByClassName('blueCell'), false);
+        blurCards(document.getElementsByClassName('redCell'), false);
+        blurCards(document.getElementsByClassName('purpleCell'), false);
+    }
+}
+
+function applyGroup(){
+    blurMainInterface(false);
+    showGroupPopup(false);
+    userGroup = document.getElementById('groupField').value;
+    userGroup = userGroup.replaceAll(' ', '-');
+    userGroup = userGroup.toUpperCase();
+    updateGroupLabel(userGroup);
+    saveGroup(userGroup);
+    loadTT(userGroup);
+}
+
+function askGroup(){
+    document.getElementById('groupField').value = userGroup;
+    blurMainInterface(true);
+    showGroupPopup(true);
+}
+
+var tempLesson = new Lesson();
+tempLesson.emptyFill();
+
+function init(){
+    const tempGroup = getGroup();
+    if (tempGroup== '' || tempGroup == null){
+        askGroup();
+    } else {
+        userGroup = tempGroup;
+        updateGroupLabel(userGroup);
+        loadTT();
+    }
+}
+
+function changeTempLessonName(){
+    tempLesson.name = document.getElementById('lessonNameField').value;
+}
+
+function changeTempLessonRoom(){
+    tempLesson.rooms = roomsFromString(document.getElementById('roomField').value);
+    if (tempLesson.rooms.length > 0){
+        try{
+            if (tempLesson.rooms[0].charAt(0) == '6'){
+                fillTimes(false);
+                if (mainStartTimes.includes(tempLesson.startTime) && mainStopTimes.includes(tempLesson.stopTime)){
+                    let index = mainStartTimes.indexOf(tempLesson.startTime);
+                    colorizeTime(index);
+                    tempLesson.startTime = sStartTimes[index];
+                    tempLesson.stopTime = sStopTimes[index];
+                }
+            } else {
+                fillTimes(true);
+                if (sStartTimes.includes(tempLesson.startTime) && sStopTimes.includes(tempLesson.stopTime)){
+                    let index = sStartTimes.indexOf(tempLesson.startTime);
+                    colorizeTime(index);
+                    tempLesson.startTime = mainStartTimes[index];
+                    tempLesson.stopTime = mainStopTimes[index];
+                }
+            }
+        } catch {
+            console.log('Была отправлена пустая строка (видимо)')
+        }
+    }
+}
+
+function setTempTeacher(){
+    tempLesson.teacher = document.getElementById('teacherField').value;
+}
+
+function setTempNotes(){
+    tempLesson.note = document.getElementById('notesField').value;
+}
+
+function chooseADay(id){
+    for (i = 0; i < weekDays.length; i ++){
+        if (weekDays[i] == id){
+            document.getElementById(weekDays[i]).style.backgroundColor = '#006CB2';
+            document.getElementById(weekDays[i]).style.color = 'white';
+        } else {
+            document.getElementById(weekDays[i]).style.backgroundColor = '#eeeeee';
+            document.getElementById(weekDays[i]).style.color = 'black';
+        }
+    }
+}
+
+function chooseType(type){
+    document.getElementById('lectureButton').style.backgroundColor = '#eeeeee';
+    document.getElementById('lectureButton').style.color = 'black';
+    document.getElementById('practiceButton').style.backgroundColor = '#eeeeee';
+    document.getElementById('practiceButton').style.color = 'black';
+    document.getElementById('labaButton').style.backgroundColor = '#eeeeee';
+    document.getElementById('labaButton').style.color = 'black';
+    document.getElementById('customTypeField').backgroundColor = '#eeeeee';
+    document.getElementById('customTypeField').color = 'black';
+
+    if (type == 'Лекция'){
+        document.getElementById('lectureButton').style.backgroundColor = '#006CB2';
+        document.getElementById('lectureButton').style.color = 'white';
+    } else if (type == 'Практика') {
+        document.getElementById('practiceButton').style.backgroundColor = '#006CB2';
+        document.getElementById('practiceButton').style.color = 'white';
+    } else if (type == 'Лаб.работа') {
+        document.getElementById('labaButton').style.backgroundColor = '#006CB2';
+        document.getElementById('labaButton').style.color = 'white';
+    } else {
+        document.getElementById('customTypeField').backgroundColor = '#006CB2';
+        document.getElementById('customTypeField').color = 'white';
+        document.getElementById('customTypeField').value = type;
+    }
+}
+
+function setDay(day){
+    tempLesson.day = day;
+    chooseADay(weekDays[day]);
+}
+
+function setType(type){
+    if (type != ''){
+        tempLesson.type = type;
+    } else {
+        tempLesson.type = document.getElementById('customTypeField').value;
+    }
+    chooseType(tempLesson.type);
+}
+
+function colorizeWeeks(weeks){
+    if (weeks.includes(-2)){
+        document.getElementById('evenButton').style.backgroundColor = '#006CB2';
+        document.getElementById('evenButton').style.color = 'white';
+    } else {
+        document.getElementById('evenButton').style.backgroundColor = '#eeeeee';
+        document.getElementById('evenButton').style.color = 'black';
+    }
+
+    if (weeks.includes(-1)){
+        document.getElementById('oddButton').style.backgroundColor = '#006CB2';
+        document.getElementById('oddButton').style.color = 'white';
+    } else {
+        document.getElementById('oddButton').style.backgroundColor = '#eeeeee';
+        document.getElementById('oddButton').style.color = 'black';
+    }
+}
+
+function setEven(){
+    if (tempLesson.weeks.includes(-2)){
+        tempLesson.weeks = tempLesson.weeks.remove(-2);
+    } else {
+        tempLesson.weeks.push(-2);
+    }
+    colorizeWeeks(tempLesson.weeks);
+}
+
+function setOdd(){
+    if (tempLesson.weeks.includes(-1)){
+        tempLesson.weeks =  tempLesson.weeks.remove(-1);
+    } else {
+        tempLesson.weeks.push(-1);
+    }
+    colorizeWeeks(tempLesson.weeks);
+}
+
+function customWeeks(){
+    var tempWeeks = [];
+    if (tempLesson.weeks.includes(-1)){tempWeeks.push(-1);}
+    if (tempLesson.weeks.includes(-2)){tempWeeks.push(-2);}
+    tempWeeks = tempWeeks.concat(weeksFromString(document.getElementById('customWeeks').value));
+    tempLesson.weeks = tempWeeks;
+    colorizeWeeks(tempLesson.weeks);
+}
+
+function fillTimes(main){
+    for (i = 0; i < startLabelsSE.length; i++){
+        if (main){
+            document.getElementById(startLabelsSE[i]).innerHTML = mainStartTimes[i];
+            document.getElementById(stopLabelsSE[i]).innerHTML = mainStopTimes[i];
+        } else {
+            document.getElementById(startLabelsSE[i]).innerHTML = sStartTimes[i];
+            document.getElementById(stopLabelsSE[i]).innerHTML = sStopTimes[i];
+        }
+    }
+}
+
+function colorizeTime(index){
+    for (i = 0; i < timeCards.length; i++){
+        if (i == index){
+            document.getElementById(timeCards[i]).style.backgroundColor = '#006CB2';
+            document.getElementById(timeTitles[i]).style.color = 'white';
+            document.getElementById(startLabelsSE[i]).style.color = 'white';
+            document.getElementById(borderlines[i]).style.backgroundColor = 'white';
+            document.getElementById(stopLabelsSE[i]).style.color = 'white';
+        } else {
+            document.getElementById(timeCards[i]).style.backgroundColor = '#eeeeee';
+            document.getElementById(timeTitles[i]).style.color = 'black';
+            document.getElementById(startLabelsSE[i]).style.color = 'black';
+            document.getElementById(borderlines[i]).style.backgroundColor = 'black';
+            document.getElementById(stopLabelsSE[i]).style.color = 'black';
+        }
+    }
+}
+
+function setCardTime(index){
+    tempLesson.startTime = document.getElementById(startLabelsSE[index]).innerHTML;
+    tempLesson.stopTime = document.getElementById(stopLabelsSE[index]).innerHTML;
+    colorizeTime(index);
+}
+
+function setCustomTime(){
+    colorizeTime(-1);
+    tempLesson.startTime = document.getElementById('customStartTime').value;
+    tempLesson.stopTime = document.getElementById('customStopTime').value;
+    tempLesson.startTime = cleanUpString(tempLesson.startTime);
+    tempLesson.stopTime = cleanUpString(tempLesson.stopTime);
+    tempLesson.startTime = tempLesson.startTime.replaceAll(' ',':').replaceAll('.', ':').replaceAll(',',':').replaceAll(';',':');
+    tempLesson.stopTime = tempLesson.stopTime.replaceAll(' ',':').replaceAll('.', ':').replaceAll(',',':').replaceAll(';',':');
+}
+
+function emptyEditorPopup() {
+    chooseType('');
+    colorizeTime(-1);
+    colorizeWeeks([]);
+    fillTimes(true);
+    chooseADay('');
+
+    document.getElementById('lessonNameField').value = '';
+    document.getElementById('roomField').value = '';
+    document.getElementById('teacherField').value = '';
+    document.getElementById('notesField').value = '';
+    document.getElementById('customStartTime').value = '';
+    document.getElementById('customStopTime').value = '';
+    document.getElementById('customTypeField').value = '';
+    document.getElementById('customWeeks').value = '';
+}
+
+function saveButton(){
+    let status = checkIfComplete();
+    if (status == 0){
+        if (tempLessonIndex != -1){
+            tt[tempLessonIndex] = tempLesson;
+        } else {
+            tt.push(tempLesson);
+        }
+        tempLesson = new Lesson();
+        tempLesson.emptyFill();
+        fillIn();
+        showEditor(false);
+        blurMainInterface(false);
+    } else {
+        showAlert(status - 1);
+    }
+}
+
+function deleteButton() {
+    if (tempLessonIndex != -1){
+        tt.splice(tempLessonIndex,1);
+        tempLessonIndex = -1;
+        fillIn();
+    }
+    tempLesson = new Lesson();
+    tempLesson.emptyFill();
+    showEditor(false);
+    blurMainInterface(false);
+    emptyEditorPopup();
+}
+
+function showEditor(active) {
+    if (active){
+        // document.getElementById('haha').style.display = 'flex';
+        document.getElementById('singleEditorBackground').style.visibility = 'visible';
+        document.getElementById('singleEditorBackground').style.filter = 'none';
+        document.getElementById('singleEditorBackground').style.webkitFilter = 'none';
+    } else {
+        tempLessonIndex = -1;
+        document.getElementById('singleEditorBackground').style.filter = 'blur(20px)';
+        document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(20px)';
+        // document.getElementById('haha').style.display = 'none';
+        document.getElementById('singleEditorBackground').style.visibility = 'hidden';
+    }
+}
+
+function newLesson(){
+    emptyEditorPopup();
+    blurMainInterface(true);
+    showEditor(true);
+}
+
+function editExistingOne(lesson, lessonIndex){
+    emptyEditorPopup();
+    tempLessonIndex = lessonIndex;
+    tempLesson = lesson;
+
+
+    chooseType(lesson.type);
+    setDay(lesson.day);
+
+    if (mainStartTimes.includes(lesson.startTime) && mainStopTimes.includes(lesson.stopTime)){
+        let index = mainStartTimes.indexOf(lesson.startTime);
+        fillTimes(true);
+        colorizeTime(index);
+    } else if (sStartTimes.includes(lesson.startTime) && sStopTimes.includes(lesson.stopTime)){
+        let index = sStartTimes.indexOf(lesson.startTime);
+        fillTimes(false);
+        colorizeTime(index);
+    } else {
+        document.getElementById('customStartTime').value = lesson.startTime;
+        document.getElementById('customStopTime').value = lesson.stopTime;
+    }
+
+    var tempWeeks = [...lesson.weeks];
+    colorizeWeeks(tempWeeks);
+    if (tempWeeks.includes(-2)){
+        // colorizeWeeks([-2]);
+        var index = tempWeeks.indexOf(-2);
+        tempWeeks.splice(index, 1);
+    } if (tempWeeks.includes(-1)){
+        // colorizeWeeks([-1]);
+        var index = tempWeeks.indexOf(-1);
+        tempWeeks.splice(index, 1);
+    } if (tempWeeks.length > 0){
+        document.getElementById('customWeeks').value = stringFromWeeks(tempWeeks);
+    }
+
+    document.getElementById('lessonNameField').value = lesson.name;
+    document.getElementById('roomField').value = stringFromWeeks(lesson.rooms);
+    document.getElementById('teacherField').value = lesson.teacher;
+    document.getElementById('notesField').value = lesson.note;
+    blurMainInterface(true);
+    showEditor(true);
+}
+
+function dismiss() {
+    document.getElementById('singleEditorBackground').style.filter = 'blur(20px)';
+    document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(20px)';
+    document.getElementById('singleEditorBackground').style.visibility = 'hidden';
+    document.getElementById('haha').style.filter = 'blur(20px)';
+    document.getElementById('haha').style.webkitFilter = 'blur(20px)';
+    document.getElementById('haha').style.visibility = 'hidden';
+    document.getElementById('errorAlert').style.filter = 'blur(20px)';
+    document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    document.getElementById('errorAlert').style.visibility = 'hidden';
+    document.getElementById('codePopupBackground').style.filter = 'blur(20px)';
+    document.getElementById('codePopupBackground').style.webkitFilter = 'blur(20px)';
+    document.getElementById('codePopupBackground').style.visibility = 'hidden'
+    blurMainInterface(false);
+}
+
+function checkIfComplete(){
+    if (tempLesson.name == ''){return 1;}
+    if (tempLesson.day == -1){return 2;}
+    if (tempLesson.type == ''){return 3;}
+    if (tempLesson.startTime == ''){return 4;}
+    if (tempLesson.stopTime == ''){return 5;}
+    if (tempLesson.weeks == []){
+        tempLesson.weeks = [-1,-2];
+        colorizeWeeks(tempLesson.weeks);
+    }
+    return 0;
+}
+
+function showAlert(messageID){
+    blur2level(true);
+    document.getElementById('errorAlert').style.filter = 'none';
+    document.getElementById('errorAlert').style.webkitFilter = 'none';
+    document.getElementById('errorAlert').style.visibility = 'visible';
+    document.getElementById('mainInterface').style.filter = 'blur(16px)';
+    document.getElementById('mainInterface').style.webkitFilter = 'blur(16px)';
+    document.getElementById('alertText').innerHTML = messages[messageID];
+    document.getElementById('alertDescription').innerHTML = descriptions[messageID];
+}
+
+function dismissAlert(){
+    blur2level(false);
+    document.getElementById('errorAlert').style.filter = 'blur(20px)';
+    document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    document.getElementById('errorAlert').style.visibility = 'hidden';
+    document.getElementById('mainInterface').style.filter = 'blur(8px)';
+    document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+    if (uploading){
+        uploading = false;
+        showCodePopup(false);
+        blurMainInterface(false);
+    }
+}
+
+function blur2level(toBlur){
+    if (toBlur){
+        document.getElementById('singleEditorBackground').style.filter = 'blur(8px)';
+        document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(8px)';
+        document.getElementById('codePopupBackground').style.filter = 'blur(8px)';
+        document.getElementById('codePopupBackground').style.webkitFilter = 'blur(8px)';
+    } else {
+        document.getElementById('singleEditorBackground').style.filter = 'none';
+        document.getElementById('singleEditorBackground').style.webkitFilter = 'none';
+        document.getElementById('codePopupBackground').style.filter = 'none';
+        document.getElementById('codePopupBackground').style.webkitFilter = 'none';
+    }
+}
+
+function openVK(){
+    window.open('https://vk.com/nntuapp', '_blank').focus();
+}
+
+function sendEmail(){
+    window.open('mailto:nntuapp@inbox.ru', '_blank').focus();
+}
+
+function showCodePopup(toShow){
+    if (toShow){
+        document.getElementById('codePopupBackground').style.filter = 'none';
+        document.getElementById('codePopupBackground').style.webkitFilter = 'none';
+        document.getElementById('codePopupBackground').style.visibility = 'visible'
+    } else {
+        document.getElementById('codePopupBackground').style.filter = 'blur(20px)';
+        document.getElementById('codePopupBackground').style.webkitFilter = 'blur(20px)';
+        document.getElementById('codePopupBackground').style.visibility = 'hidden'
+    }
+}
+
+function askCode(){
+    blurMainInterface(true);
+    showCodePopup(true);
+}
+
+function upload(code, group = userGroup){
+    uploading = true;
+    showAlert(7);
+    var request = new XMLHttpRequest();
+    
+
+    var startTimes = [];
+    var stopTimes = [];
+    var days = [];
+    var weeks = [];
+    var rooms = [];
+    var names = [];
+    var types = [];
+    var teachers = [];
+    var notes = [];
+
+    for (i = 0; i < tt.length; i++){
+        startTimes.push(tt[i].startTime);
+        stopTimes.push(tt[i].stopTime);
+        days.push(tt[i].day);
+        weeks.push(stringFromWeeks(tt[i].weeks));
+        rooms.push(stringFromRooms(tt[i].rooms));
+        names.push(tt[i].name);
+        types.push(tt[i].type);
+        teachers.push(tt[i].teacher);
+        notes.push(tt[i].note);
+    }
+
+    var data = JSON.stringify({
+        key: postKey,
+        code: code,
+        groupName: group,
+        startTimes: startTimes,
+        stopTimes: stopTimes,
+        days: days,
+        weeks: weeks,
+        rooms: rooms,
+        names: names,
+        types: types,
+        teachers: teachers,
+        notes: notes
+    });
+
+    console.log(data);
+
+    request.open("POST", address, true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.onreadystatechange = function(){
+        if (this.status == 401){
+            showAlert(5);
+        } else if (this.status == 200){
+            showAlert(6);
+        } else {
+            showAlert(7);
+        }
+        
+        // tt = [];
+        // downloadedTT = JSON.parse(this.responseText);
+        // for (i = 0; i < downloadedTT.days.length; i++){
+        //     tt.push(new Lesson(downloadedTT.startTimes[i], downloadedTT.stopTimes[i], downloadedTT.days[i], weeksFromString(downloadedTT.weeks[i]), roomsFromString(downloadedTT.rooms[i]), downloadedTT.names[i], downloadedTT.types[i], downloadedTT.teachers[i], downloadedTT.notes[i]));
+        // }
+        // console.log(tt);
+        // fillIn();
+    };
+    request.send(data);
+}
+
+function uploadButton(){
+    upload(document.getElementById('codeField').value);
+}
+
+document.onreadystatechange = function(){
+    if (document.readyState == 'complete'){
+        init();
+    }
+}
+
+// document.getElementById('haha').style.display = 'none';
+
+// function popup(){
+// }

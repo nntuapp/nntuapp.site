@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="algorythm.js"></script>
+    <script src="keys.js"></script>
+</head>
+<body>
+    <div class = 'singleEditorBackground'>
+        <div class = 'singleEditorPopup'>
+            <textarea class = 'lessonNameField' id = 'lessonNameField' placeholder="Название" oninput="changeTempLessonName()"></textarea>
+            <div class = 'singleEditorSegmentLabel'>Тип занятия</div>
+            <div class = 'lilButtons'>
+                <button id = 'lectureButton' onclick = "setType('Лекция')" class = 'lilButton'>Лекция</button>
+                <button id = 'practiceButton' onclick = "setType('Практика')" class = 'lilButton'>Практика</button>
+                <button id = 'labaButton' onclick = "setType('Лаб.работа')" class = 'lilButton'>Лаб.работа</button>
+                <textarea id = 'customTypeField' oninput = "setType('')" class = 'optionalField' placeholder="Другое..."></textarea>
+            </div>
+            <textarea id = 'roomField' class = 'singleEditorField' placeholder="Аудитория" oninput="changeTempLessonRoom()"></textarea>
+            <div class = 'lilInfo'>Если аудиторий несколько - напишите через запятую</div>
+            <div class = 'singleEditorSegmentLabel'>Время занятия</div>
+            <div class = 'timeButtons'>
+                <div id = 'time0' class = 'timeButton' onclick="setCardTime(0)">
+                    <div id = 'title0' class = 'lessonTitle'>1 пара</div>
+                    <div id = 'start0' class = 'startTimeLabel'>7:30</div>
+                    <div id = 'line0' class = 'line'></div>
+                    <div id = 'stop0' class = 'stopTimeLabel'>9:05</div>
+                </div>
+                <div id = 'time1' class = 'timeButton' onclick="setCardTime(1)">
+                    <div id = 'title1' class = 'lessonTitle'>2 пара</div>
+                    <div id = 'start1' class = 'startTimeLabel'>9:20</div>
+                    <div id = 'line1' class = 'line'></div>
+                    <div id = 'stop1' class = 'stopTimeLabel'>10:55</div>
+                </div>
+                <div id = 'time2' class = 'timeButton' onclick="setCardTime(2)">
+                    <div id = 'title2' class = 'lessonTitle'>3 пара</div>
+                    <div id = 'start2' class = 'startTimeLabel'>11:10</div>
+                    <div id = 'line2' class = 'line'></div>
+                    <div id = 'stop2' class = 'stopTimeLabel'>12:45</div>
+                </div>
+                <div id = 'time3' class = 'timeButton' onclick="setCardTime(3)">
+                    <div id = 'title3' class = 'lessonTitle'>4 пара</div>
+                    <div id = 'start3' class = 'startTimeLabel'>13:15</div>
+                    <div id = 'line3' class = 'line'></div>
+                    <div id = 'stop3' class = 'stopTimeLabel'>14:50</div>
+                </div>
+                <div id = 'time4' class = 'timeButton' onclick="setCardTime(4)">
+                    <div id = 'title4' class = 'lessonTitle'>5 пара</div>
+                    <div id = 'start4' class = 'startTimeLabel'>15:00</div>
+                    <div id = 'line4' class = 'line'></div>
+                    <div id = 'stop4' class = 'stopTimeLabel'>16:35</div>
+                </div>
+                <div id = 'time5' class = 'timeButton' onclick="setCardTime(5)">
+                    <div id = 'title5' class = 'lessonTitle'>6 пара</div>
+                    <div id = 'start5' class = 'startTimeLabel'>16:45</div>
+                    <div id = 'line5' class = 'line'></div>
+                    <div id = 'stop5' class = 'stopTimeLabel'>18:20</div>
+                </div>
+                <div id = 'time6' class = 'timeButton' onclick="setCardTime(6)">
+                    <div id = 'title6' class = 'lessonTitle'>7 пара</div>
+                    <div id = 'start6' class = 'startTimeLabel'>18:30</div>
+                    <div id = 'line6' class = 'line'></div>
+                    <div id = 'stop6' class = 'stopTimeLabel'>20:05</div>
+                </div>
+                <div class = 'customTime'>
+                    <div class = 'cumstomStart'>
+                        <div class = 'customTimeLabel'>Начало</div>
+                        <textarea id = 'customStartTime' oninput = 'setCustomTime()' class = 'customTimeField' placeholder="7:30"></textarea>
+                    </div>
+                    <div class = 'cumstomStart'>
+                        <div class = 'customTimeLabel'>Конец</div>
+                        <textarea id = 'customStopTime' oninput = 'setCustomTime()' class = 'customTimeField' placeholder="9:05"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class = 'singleEditorSegmentLabel'>Недели</div>
+            <div class = 'lilButtons'>
+                <button id = 'evenButton' class = 'lilButton' onclick="setEven()">Четные</button>
+                <button id = 'oddButton' class = 'lilButton' onclick="setOdd()">Нечетные</button>
+                <textarea id = 'customWeeks' class = 'optionalField' placeholder="Другие..." oninput="customWeeks()"></textarea>
+            </div>
+            <div class = 'lilInfo'>Если недель несколько - напишите через запятую</div>
+            <div class = 'singleEditorSegmentLabel'>День занятия</div>
+            <div class = 'lilButtons'>
+                <button id = 'wday0' onclick="setDay(0)" class = 'lilButton'>Пн</button>
+                <button id = 'wday1' onclick="setDay(1)" class = 'lilButton'>Вт</button>
+                <button id = 'wday2' onclick="setDay(2)" class = 'lilButton'>Ср</button>
+                <button id = 'wday3' onclick="setDay(3)" class = 'lilButton'>Чт</button>
+                <button id = 'wday4' onclick="setDay(4)" class = 'lilButton'>Пт</button>
+                <button id = 'wday5' onclick="setDay(5)" class = 'lilButton'>Сб</button>
+                <button id = 'wday6' onclick="setDay(6)" class = 'lilButton'>Вс</button>
+            </div>
+            <textarea id = 'teacherField' class = 'singleEditorField' placeholder="Преподаватель" oninput="setTempTeacher()"></textarea> <br>
+            <textarea id = 'notesField' class = 'singleEditorField' placeholder="Заметки" oninput="setTempNotes()"></textarea>
+            <div class = 'actionButtons'>
+                <button class = 'saveButton'>Применить</button>
+                <button class = 'deleteButton'>Удалить</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
