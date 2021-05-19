@@ -708,7 +708,7 @@ function checkIfComplete(){
     if (tempLesson.type == ''){return 3;}
     if (tempLesson.startTime == ''){return 4;}
     if (tempLesson.stopTime == ''){return 5;}
-    if (tempLesson.weeks == []){
+    if (tempLesson.weeks.length == 0){
         tempLesson.weeks = [-1,-2];
         colorizeWeeks(tempLesson.weeks);
     }

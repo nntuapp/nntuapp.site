@@ -292,13 +292,30 @@ function showGroupPopup(active){
     }
 }
 
+function blurCards(cardsArray, blur){
+    for (i = 0; i < cardsArray.length; i++){
+        if (blur){
+            cardsArray[i].style.filter = 'blur(8px)'
+        } else {
+            cardsArray[i].style.filter = 'none'
+        }
+    }
+}
+
+
 function blurMainInterface(active){
     if (active){
         document.getElementById('mainInterface').style.filter = 'blur(8px)';
         document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+        blurCards(document.getElementsByClassName('blueCell'), true);
+        blurCards(document.getElementsByClassName('redCell'), true);
+        blurCards(document.getElementsByClassName('purpleCell'), true);
     } else {
         document.getElementById('mainInterface').style.filter = 'none';
         document.getElementById('mainInterface').style.webkitFilter = 'none';
+        blurCards(document.getElementsByClassName('blueCell'), false);
+        blurCards(document.getElementsByClassName('redCell'), false);
+        blurCards(document.getElementsByClassName('purpleCell'), false);
     }
 }
 
