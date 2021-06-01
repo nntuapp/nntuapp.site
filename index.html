@@ -18,7 +18,13 @@
             <button class = 'okButton' onclick="applyGroup()">ОК</button>
         </div>
     </div>
-    
+    <div class = 'alertBackground' id = 'errorAlert'>
+        <div class = 'alertPopup'>
+            <div class = 'question' id = 'alertText'>Укажите день занятия 📆</div>
+            <div class = 'description' id = 'alertDescription'>Эти данные необходимы</div>
+            <button class = 'okButton' onclick="dismissAlert()">ОК</button>
+        </div>
+    </div>
     <div id = 'mainInterface' class="mainInterface">
         <div class='header'>
             <div class='title'">Расписание</div> 
@@ -32,7 +38,7 @@
             </div>
             <div id = 'groupLabel' class = 'groupLabel' onclick="askGroup()">Группа:</div>
         </div>
-        <div class='days'>
+        <div class='days' id = 'days'>
             <div class='daysContent'>
                 <div class ='singleDay'>
                     <h2>Понедельник</h2>

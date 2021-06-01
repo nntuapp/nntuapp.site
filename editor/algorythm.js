@@ -4,6 +4,9 @@ var blurred = false;
 var userGroup = '';
 var uploading = false;
 
+var isFLevelAlert = false;
+var pos = {left: 0, mouseX: 0, speed: 0, acc: 0, time: null, prevX: 0};
+
 const days = ['day0','day1', 'day2', 'day3', 'day4', 'day5', 'day6'];
 const startLabelsSE = ['start0','start1','start2','start3','start4','start5','start6'];
 const stopLabelsSE = ['stop0','stop1','stop2','stop3','stop4','stop5','stop6'];
@@ -18,9 +21,9 @@ const mainStopTimes = ["9:05", "10:55", "12:45", "14:50", "16:35", "18:20", "20:
 const sStartTimes = ["8:00", "9:45", "11:35", "13:40", "15:25", "17:10", "18:55", "20:40"];
 const sStopTimes = ["9:35", "11:20", "13:10", "15:15", "17:00", "18:45", "20:30", "22:15"];
 
-const messages = ['Укажите название занятия 😳', 'Укажите день занятия 📆', 'Укажите тип занятия ☝️', 'Укажите время занятия ⏰', 'Укажите время занятия ⏰', 'Неверный код 😭', 'Расписание загружено на сервер 🥳', 'Проблемы с подключением 😬'];
+const messages = ['Укажите название занятия 😳', 'Укажите день занятия 📆', 'Укажите тип занятия ☝️', 'Укажите время занятия ⏰', 'Укажите время занятия ⏰', 'Неверный код 😭', 'Расписание загружено на сервер 🥳', 'Проблемы с подключением 😬', 'Расписание не загружено 😳'];
 
-const descriptions = ['Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Проверьте правильность введённого кода', 'Вы поделились этим расписанием. Ура!', 'Проверьте своё подключение к интернету'];
+const descriptions = ['Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Проверьте правильность введённого кода', 'Вы поделились этим расписанием. Ура!', 'Проверьте своё подключение к интернету', 'Проверьте правильность введённой группы и подключение к интернету'];
 
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
@@ -47,7 +50,6 @@ class Lesson {
         this.teacher = teacher;
         this.note = note;
     };
-
     emptyFill(){
         this.startTime = '';
         this.stopTime = '';
@@ -103,9 +105,33 @@ function getGroup(cookiename = 'group') {
 
 
 function saveGroup(group) {
-    document.cookie = "group=" + encodeURIComponent(group);
+    var exp_date = new Date();
+    exp_date.setFullYear(exp_date.getFullYear() + 1);
+    document.cookie = "group=" + encodeURIComponent(group) + "; expires=" + exp_date.toUTCString();
 }
-  
+
+
+function saveTTLocally(tt){
+    localStorage.setItem('tt', JSON.stringify(tt));
+    // console.log(JSON.parse(localStorage.getItem('tt')));
+}
+
+function constructLesson(data){
+    return new Lesson(data.startTime, data.stopTime, data.day, data.weeks, data.rooms, data.name, data.type, data.teacher, data.note);
+}
+
+function getLocalTT(key = 'tt'){
+    var saved = localStorage.getItem('tt');
+    if (saved) {
+        tempTT = JSON.parse(saved);
+        for (i = 0; i < tempTT.length; i++){
+            tt.push(constructLesson(tempTT[i]));
+        }
+        fillIn();
+    } else {
+        loadTT();
+    }
+}
 
 function getCard(lesson, lessonIndex){
     if (lesson.weeks.includes(-1) && lesson.weeks.includes(-2)){
@@ -170,32 +196,6 @@ function getCard(lesson, lessonIndex){
         </div> </p>`;
     }
 }
-
-// function randomInteger(min, max) {
-//   return Math.floor(min + Math.random() * (max + 1 - min));
-// }
-
-// function cards(){
-//     var test = new Lesson('9:00', '10:30', 5, [randomInteger(-2,-1)], ['3214'], 'Математический анализ', 'Практика' ,'Моисеев Антон Евгеньевич', 'супер заметка')
-//     document.getElementById("cards").innerHTML += getCard(test)
-// }
-
-// function addCardToMonday(){
-//     let days = ['day0','day1', 'day2', 'day3', 'day4', 'day5', 'day6'];
-//     var test = new Lesson('9:30', '10:30', 5, [randomInteger(-2,-1)], ['3214'], 'Структуры данных', 'Практика' ,'Моисеев Антон Евгеньевич', 'пока лучше ничего не было')
-
-//     for (i = 0; i < days.length; i++){
-//         test.weeks = [randomInteger(-2,-1)]
-//         document.getElementById(days[i]).innerHTML += getCard(test)
-//     }
-    
-//     // // document.getElementById("day0").innerHTML += 'haha <br>'
-    
-//     // document.getElementById("day1").innerHTML += getCard(test)
-//     // // document.getElementById("day1").innerHTML += 'haha <br>'
-//     // test.weeks = [randomInteger(-2,-1)]
-//     // document.getElementById("day2").innerHTML += getCard(test)
-// }
 
 function weeksFromString(input){
     var weeks = [];
@@ -272,6 +272,9 @@ function estTimeFromString(input){
 }
 
 function fillIn(){
+    if (tt.length == 0){
+        showAlert(8, fLevel = true);
+    }
     tt.sort(function(a,b){
         var startA = estTimeFromString(a.startTime);
         var startB = estTimeFromString(b.startTime);
@@ -307,7 +310,6 @@ function loadTT(group = userGroup){
         for (i = 0; i < downloadedTT.days.length; i++){
             tt.push(new Lesson(downloadedTT.startTimes[i], downloadedTT.stopTimes[i], downloadedTT.days[i], weeksFromString(downloadedTT.weeks[i]), roomsFromString(downloadedTT.rooms[i]), downloadedTT.names[i], downloadedTT.types[i], downloadedTT.teachers[i], downloadedTT.notes[i]));
         }
-        // console.log(tt);
         fillIn();
         }
     };
@@ -373,23 +375,18 @@ function applyGroup(){
 
 function askGroup(){
     document.getElementById('groupField').value = userGroup;
+    document.getElementById('groupField').addEventListener("keyup", function(event){
+        if (event.keyCode == 13){
+            document.getElementById('groupField').value = document.getElementById('groupField').value.replaceAll('\n', '');
+            applyGroup();
+        }
+    });
     blurMainInterface(true);
     showGroupPopup(true);
 }
 
 var tempLesson = new Lesson();
 tempLesson.emptyFill();
-
-function init(){
-    const tempGroup = getGroup();
-    if (tempGroup== '' || tempGroup == null){
-        askGroup();
-    } else {
-        userGroup = tempGroup;
-        updateGroupLabel(userGroup);
-        loadTT();
-    }
-}
 
 function changeTempLessonName(){
     tempLesson.name = document.getElementById('lessonNameField').value;
@@ -600,6 +597,7 @@ function saveButton(){
         }
         tempLesson = new Lesson();
         tempLesson.emptyFill();
+        saveTTLocally(tt);
         fillIn();
         showEditor(false);
         blurMainInterface(false);
@@ -715,7 +713,7 @@ function checkIfComplete(){
     return 0;
 }
 
-function showAlert(messageID){
+function showAlert(messageID, fLevel = false){
     blur2level(true);
     document.getElementById('errorAlert').style.filter = 'none';
     document.getElementById('errorAlert').style.webkitFilter = 'none';
@@ -724,6 +722,7 @@ function showAlert(messageID){
     document.getElementById('mainInterface').style.webkitFilter = 'blur(16px)';
     document.getElementById('alertText').innerHTML = messages[messageID];
     document.getElementById('alertDescription').innerHTML = descriptions[messageID];
+    isFLevelAlert = fLevel
 }
 
 function dismissAlert(){
@@ -736,6 +735,10 @@ function dismissAlert(){
     if (uploading){
         uploading = false;
         showCodePopup(false);
+        blurMainInterface(false);
+    }
+    if (isFLevelAlert){
+        isFLevelAlert = false;
         blurMainInterface(false);
     }
 }
@@ -850,13 +853,72 @@ function uploadButton(){
     upload(document.getElementById('codeField').value);
 }
 
+
+function init(){
+    const tempGroup = getGroup();
+    document.getElementById('days').addEventListener('mousedown', mouseDownHandler);
+    if (tempGroup== '' || tempGroup == null){
+        askGroup();
+    } else {
+        userGroup = tempGroup;
+        updateGroupLabel(userGroup);
+        getLocalTT();
+    }
+}
+
+
+
 document.onreadystatechange = function(){
     if (document.readyState == 'complete'){
         init();
     }
 }
 
-// document.getElementById('haha').style.display = 'none';
+const mouseDownHandler = function(e){
+    document.getElementById('days').style.cursor = 'grabbing';
+    document.getElementById('days').style.userSelect = 'none'
 
-// function popup(){
-// }
+    pos.time = Date.now()
+    pos.left = document.getElementById('days').scrollLeft;
+    pos.speed = 0;
+    pos.acc = 0;
+    pos.prevX = e.clientX;
+    pos.mouseX = e.clientX;
+
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+}
+
+const mouseMoveHandler = function(e){
+    const dx = e.clientX - pos.mouseX;
+
+    const dt = Date.now() - pos.time;
+    pos.time = Date.now();
+
+    const newSpeed = (dx - pos.prevX)/dt;
+    pos.acc = (newSpeed - pos.speed)/dt;
+    pos.speed = newSpeed;
+    pos.prevX = dx;
+
+    document.getElementById('days').scrollLeft = pos.left - dx;
+}
+
+const mouseUpHandler = function(){
+    document.getElementById('days').style.cursor = 'grab';
+    document.getElementById('days').style.removeProperty('user-select');
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    // let inert = setInterval(function(){
+    //     const dt = 16;
+    //     if (pos.speed == 0){
+    //         clearInterval(inert);
+    //     } else {
+    //         pos.speed += pos.acc*dt;
+    //         let newLeft = pos.left + pos.speed*dt;
+    //         pos.speed = (document.getElementById('days').scrollLeft - pos.left)/dt;
+    //         pos.left = newLeft;
+    //         document.getElementById('days').scrollLeft = pos.left;
+    //         console.log(pos.speed);
+    //     }
+    // }, 16);
+}

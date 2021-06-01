@@ -255,6 +255,7 @@ html, body {
 
 .days{
     margin-top: 20px;
+    cursor: grab;
     overflow-x: scroll;
 }
 
@@ -637,6 +638,7 @@ h2{
     border-radius: 15px;
     background-color: white;
     margin: auto;
+    max-width: 300px;
 }
 
 .description{

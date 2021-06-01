@@ -4,6 +4,15 @@ var tt = [];
 var blurred = false;
 var userGroup = '';
 
+var pos = {left: 0, mouseX: 0, speed: 0, acc: 0, time: null, prevX: 0};
+
+
+const messages = ['Укажите название занятия 😳', 'Укажите день занятия 📆', 'Укажите тип занятия ☝️', 'Укажите время занятия ⏰', 'Укажите время занятия ⏰', 'Неверный код 😭', 'Расписание загружено на сервер 🥳', 'Проблемы с подключением 😬', 'Расписание не загружено 😳'];
+
+const descriptions = ['Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Эти данные необходимы', 'Проверьте правильность введённого кода', 'Вы поделились этим расписанием. Ура!', 'Проверьте своё подключение к интернету', 'Проверьте правильность введённой группы и подключение к интернету'];
+
+var isFLevelAlert = false;
+
 var nowWeek = 0;
 
 const days = ['day0','day1', 'day2', 'day3', 'day4', 'day5', 'day6'];
@@ -77,34 +86,21 @@ Date.prototype.getWeekNumber = function(){
 function getGroup(cookiename = 'group') {
     var results = document.cookie.match ( '(^|;) ?' + cookiename + '=([^;]*)(;|$)' );
     if ( results )
-      return ( decodeURIComponent(results[2] ) );
+      return (decodeURIComponent(results[2]));
     else
       return null;
 }
 
 
 function saveGroup(group) {
-    document.cookie = "group=" + encodeURIComponent(group);
+    var exp_date = new Date();
+    exp_date.setFullYear(exp_date.getFullYear() + 1);
+    document.cookie = "group=" + encodeURIComponent(group) + "; expires=" + exp_date.toUTCString();
 }
   
 
 function getCard(lesson, lessonIndex){
-    if (lesson.weeks.includes(-1) && lesson.weeks.includes(-2)){
-        return `<p><div class = "purpleCell" onclick = "showFullDetail(tt[${lessonIndex}], ${lessonIndex})">
-            <div class = "table">
-                <div class="numbersCol">
-                    <div class = "time">${lesson.startTime}<br>––<br>${lesson.stopTime}</div>
-                    <div class = "room">${lesson.stringRooms}</div>
-                </div>
-                <div class = "dataPlace">
-                    <div class = "purpleTitle">${lesson.name}</div>
-                    <div class = "teacherLabel">${lesson.teacher}</div>
-                    <div class = "noteLabel">${lesson.note}</div>
-                    <div class = "weekNTypeLabel">${lesson.stringWeeks}, ${lesson.type.toUpperCase()}</div>
-                </div>
-            </div>
-        </div> </p>`;
-    } else if (lesson.weeks.includes(-2)) {
+    if (nowWeek % 2 == 0) {
         return `<p><div class = "blueCell" onclick = "showFullDetail(tt[${lessonIndex}], ${lessonIndex})">
             <div class = "table">
                 <div class="numbersCol">
@@ -119,7 +115,7 @@ function getCard(lesson, lessonIndex){
                 </div>
             </div>
         </div> </p>`;
-    } else if (lesson.weeks.includes(-1)){
+    } else{
         return `<p><div class = "redCell" onclick = "showFullDetail(tt[${lessonIndex}], ${lessonIndex})">
             <div class = "table">
                 <div class="numbersCol">
@@ -128,21 +124,6 @@ function getCard(lesson, lessonIndex){
                 </div>
                 <div class = "dataPlace">
                     <div class = "redTitle">${lesson.name}</div>
-                    <div class = "teacherLabel">${lesson.teacher}</div>
-                    <div class = "noteLabel">${lesson.note}</div>
-                    <div class = "weekNTypeLabel">${lesson.stringWeeks}, ${lesson.type.toUpperCase()}</div>
-                </div>
-            </div>
-        </div> </p>`;
-    } else {
-        return `<p><div class = "purpleCell" onclick = "showFullDetail(tt[${lessonIndex}], ${lessonIndex})">
-            <div class = "table">
-                <div class="numbersCol">
-                    <div class = "time">${lesson.startTime}<br>––<br>${lesson.stopTime}</div>
-                    <div class = "room">${lesson.stringRooms}</div>
-                </div>
-                <div class = "dataPlace">
-                    <div class = "purpleTitle">${lesson.name}</div>
                     <div class = "teacherLabel">${lesson.teacher}</div>
                     <div class = "noteLabel">${lesson.note}</div>
                     <div class = "weekNTypeLabel">${lesson.stringWeeks}, ${lesson.type.toUpperCase()}</div>
@@ -229,6 +210,9 @@ function estTimeFromString(input){
 }
 
 function fillIn(){
+    if (tt.length == 0){
+        showAlert(8, fLevel = true);
+    }
     tt.sort(function(a,b){
         var startA = estTimeFromString(a.startTime);
         var startB = estTimeFromString(b.startTime);
@@ -370,9 +354,29 @@ function openEditor(){
     window.open('/editor/editor.html');
 }
 
+function showAlert(messageID){
+    document.getElementById('errorAlert').style.filter = 'none';
+    document.getElementById('errorAlert').style.webkitFilter = 'none';
+    document.getElementById('errorAlert').style.visibility = 'visible';
+    document.getElementById('mainInterface').style.filter = 'blur(16px)';
+    document.getElementById('mainInterface').style.webkitFilter = 'blur(16px)';
+    document.getElementById('alertText').innerHTML = messages[messageID];
+    document.getElementById('alertDescription').innerHTML = descriptions[messageID];
+}
+
+function dismissAlert(){
+    document.getElementById('errorAlert').style.filter = 'blur(20px)';
+    document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    document.getElementById('errorAlert').style.visibility = 'hidden';
+    document.getElementById('mainInterface').style.filter = 'blur(8px)';
+    document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+    blurMainInterface(false);
+}
+
 function init(){
     nowWeek = getNowWeek();
     updateWeekLabel();
+    document.getElementById('days').addEventListener('mousedown', mouseDownHandler);
     const tempGroup = getGroup();
     if (tempGroup== '' || tempGroup == null){
         askGroup();
@@ -390,6 +394,55 @@ document.onreadystatechange = function(){
     }
 }
 
-function showFullDetail(){
+// function showFullDetail(){
+    
+// }
 
+const mouseDownHandler = function(e){
+    document.getElementById('days').style.cursor = 'grabbing';
+    document.getElementById('days').style.userSelect = 'none'
+
+    pos.time = Date.now()
+    pos.left = document.getElementById('days').scrollLeft;
+    pos.speed = 0;
+    pos.acc = 0;
+    pos.prevX = e.clientX;
+    pos.mouseX = e.clientX;
+
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+}
+
+const mouseMoveHandler = function(e){
+    const dx = e.clientX - pos.mouseX;
+
+    const dt = Date.now() - pos.time;
+    pos.time = Date.now();
+
+    const newSpeed = (dx - pos.prevX)/dt;
+    pos.acc = (newSpeed - pos.speed)/dt;
+    pos.speed = newSpeed;
+    pos.prevX = dx;
+
+    document.getElementById('days').scrollLeft = pos.left - dx;
+}
+
+const mouseUpHandler = function(){
+    document.getElementById('days').style.cursor = 'grab';
+    document.getElementById('days').style.removeProperty('user-select');
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    // let inert = setInterval(function(){
+    //     const dt = 16;
+    //     if (pos.speed == 0){
+    //         clearInterval(inert);
+    //     } else {
+    //         pos.speed += pos.acc*dt;
+    //         let newLeft = pos.left + pos.speed*dt;
+    //         pos.speed = (document.getElementById('days').scrollLeft - pos.left)/dt;
+    //         pos.left = newLeft;
+    //         document.getElementById('days').scrollLeft = pos.left;
+    //         console.log(pos.speed);
+    //     }
+    // }, 16);
 }
