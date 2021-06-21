@@ -908,17 +908,24 @@ const mouseUpHandler = function(){
     document.getElementById('days').style.cursor = 'grab';
     document.getElementById('days').style.removeProperty('user-select');
     document.removeEventListener('mousemove', mouseMoveHandler);
-    // let inert = setInterval(function(){
-    //     const dt = 16;
-    //     if (pos.speed == 0){
-    //         clearInterval(inert);
-    //     } else {
-    //         pos.speed += pos.acc*dt;
-    //         let newLeft = pos.left + pos.speed*dt;
-    //         pos.speed = (document.getElementById('days').scrollLeft - pos.left)/dt;
-    //         pos.left = newLeft;
-    //         document.getElementById('days').scrollLeft = pos.left;
-    //         console.log(pos.speed);
-    //     }
-    // }, 16);
+    let inert = setInterval(function(){
+        const dt = 16;
+        if (pos.speed == 0){
+            clearInterval(inert);
+        } else {
+            pos.speed += pos.acc*dt;
+            if (pos.acc > 9.8/1000*dt){
+                pos.acc -= 9.8/1000*dt;
+            } else if (pos.acc < -9.8/1000*dt) {
+                pos.acc += 9.8/1000*dt;
+            } else {
+                pos.acc = 0;
+            }
+            let newLeft = pos.left + pos.speed*dt;
+            pos.speed = (document.getElementById('days').scrollLeft - pos.left)/dt;
+            pos.left = newLeft;
+            document.getElementById('days').scrollLeft = pos.left;
+            console.log(pos.left);
+        }
+    }, 16);
 }
