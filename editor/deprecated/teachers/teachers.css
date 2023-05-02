@@ -1,0 +1,35 @@
+.teachersContainer{
+    box-sizing: border-box;
+    display: flex;
+    font-family: sans-serif;
+    font-size: small;
+    width: 100%;
+    overflow-x: hidden;
+    max-height: 0px;
+    transition: overflow-x 0.2s, padding-bottom 0.2s, visibility 0.5s, max-height 0.5s;
+}
+
+.teachersContainer:hover {
+    overflow-x: auto;
+    padding-bottom: 1em;
+}
+
+.teacherButton{
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.6);
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 5px;
+    max-lines: 1;
+    overflow-block: ellipsis;
+    white-space: nowrap;
+
+    transition: background-color 0.35s, color 0.35s;
+}
+
+.teacherButton:hover{
+    background-color: blue;
+    color: white;
+    cursor: pointer;
+}

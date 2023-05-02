@@ -1,34 +1,48 @@
-@font-face {
-    font-family: 'regular';
-    src: url("SFProDisplay-Regular.ttf");
+/* @font-face {
+    font-family: 'Helvetica';
+    src: url("SFProDisplay-Helvetica.ttf");
 }
 
 @font-face {
-    font-family: 'itallic';
-    src: url("SFProDisplay-RegularItalic.ttf");
+    font-family: 'Helvetica';
+    src: url("SFProDisplay-HelveticaItalic.ttf");
 }
 
 
 @font-face {
-    font-family: 'semibold';
+    font-family: 'Helvetica-Bold';
     word-wrap: break-word;
     overflow-wrap: break-word;
-    src: url("SFProDisplay-Semibold.ttf");
+    src: url("SFProDisplay-Helvetica-Bold.ttf");
 }
 
 @font-face {
-    font-family: 'heavy';
-    src: url("SFProDisplay-Heavy.ttf");
+    font-family: 'Helvetica-Bold';
+    src: url("SFProDisplay-Helvetica-Bold.ttf");
+} */
+
+@font-face {
+    font-family: 'Helvetica';
+    src: url("HelveticaRegular.ttf");
 }
 
+@font-face {
+    font-family: 'Helvetica-Bold';
+    src: url("HelveticaBold.ttf");
+}
+
+*{
+    font-family: sans-serif;
+}
 
 html, body {
+    width: 100%;
     height: 100%;
     margin: 0;
 }
 
 .mainInterface{
-    transition: filter 0.5s, -webkit-filter 0.5s;
+    transition: filter 0.3s, -webkit-filter 0.3s;
 }
 
 .blueCell {
@@ -53,7 +67,7 @@ html, body {
     transition-duration: 0.3s;
     -webkit-transition-property: transform;
     transition-property: transform;
-    transition: filter 0.5s, transform 0.3s;
+    transition: filter 0.3s, transform 0.3s;
 }
 .blueCell:hover, .blueCell:focus, .blueCell:active{
     -webkit-transform: scale(1.03);
@@ -82,7 +96,7 @@ html, body {
     transition-duration: 0.3s;
     -webkit-transition-property: transform;
     transition-property: transform;
-    transition: filter 0.5s, transform 0.3s;
+    transition: filter 0.3s, transform 0.3s;
 }
 .redCell:hover, .redCell:focus, .redCell:active{
     -webkit-transform: scale(1.03);
@@ -111,7 +125,7 @@ html, body {
     transition-duration: 0.3s;
     -webkit-transition-property: transform;
     transition-property: transform;
-    transition: filter 0.5s, transform 0.3s;
+    transition: filter 0.3s, transform 0.3s;
 }
 .purpleCell:hover, .purpleCell:focus, .purpleCell:active{
     -webkit-transform: scale(1.03);
@@ -147,7 +161,8 @@ html, body {
     box-sizing: border-box;
     text-align: end;
     color: #fff;
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-size: 16px;
     margin-bottom: 10px;
 }
@@ -156,7 +171,8 @@ html, body {
     box-sizing: border-box;
     text-align: end;
     color: #fff;
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-size: 16px;
     margin-top: auto;
 }
@@ -167,7 +183,8 @@ html, body {
     word-wrap: break-word;
     overflow-wrap: break-word;
     color: #006CB2;
-    font-family: 'heavy';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-size: 21px;
 }
 
@@ -177,7 +194,8 @@ html, body {
     word-wrap: break-word;
     overflow-wrap: break-word;
     color: #CD2D09;
-    font-family: 'heavy';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-size: 21px;
 }
 
@@ -187,7 +205,8 @@ html, body {
     word-wrap: break-word;
     overflow-wrap: break-word;
     color: #160947;
-    font-family: 'heavy';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-size: 21px;
 }
 
@@ -196,7 +215,7 @@ html, body {
     width: 213px;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 16px;
 }
 
@@ -205,7 +224,7 @@ html, body {
     width: 213px;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-family: 'itallic';
+    /* font-family: 'Helvetica'; */
     font-size: 14px;
 }
 
@@ -214,7 +233,8 @@ html, body {
     width: 213px;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: 600;
     font-variant-caps: inherit;
     font-size: 16px;
 }
@@ -228,8 +248,8 @@ html, body {
 
 .title{
     display: inline-block;
-    font-family: 'heavy';
-    font-weight: normal;
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-size: 32px;
     cursor: default;
 }
@@ -262,8 +282,8 @@ html, body {
 h2{
     font-variant-caps: all-small-caps;
     font-size: 16px;
-    font-family: 'semibold';
-    font-weight: normal;
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     color: #8A8A8A;
     cursor: default;
 }
@@ -272,8 +292,8 @@ h2{
     display: flex;
     box-sizing: border-box;
     align-content: center;
-    padding-left: 30px;
-    padding-right: 30px;
+    margin-left: 30px;
+    margin-right: 30px;
     padding-bottom: 5px;
 }
 
@@ -305,12 +325,13 @@ h2{
     min-height: 100%;
     background-color: transparent;
     z-index: 2;
-    background-color: rgb(0, 0, 0, 0.1);
+    background-color: rgb(0, 0, 0, 0.5);
 
-    filter: blur(20px);
-    -webkit-filter: blur(20px);
+    /* filter: blur(20px); */
+    /* -webkit-filter: blur(20px); */
+    opacity: 0;
 
-    transition: visibility 0.2s, filter 0.5s, -webkit-filter 0.5s;
+    transition: visibility 0.3s, filter 0.3s, -webkit-filter 0.3s, opacity 0.3s;
 }
 
 .groupPopup{
@@ -325,12 +346,13 @@ h2{
 }
 
 .question{
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-size: 1.2em;
 }
 
 .groupField {
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     border: none;
     border-color: transparent;
     background-color: #eeeeee;
@@ -348,7 +370,7 @@ h2{
 }
 
 .okButton{
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 1em;
     padding: 7px;
     border: none;
@@ -366,7 +388,7 @@ h2{
     border: none;
     background: none;
     align-self: flex-start;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     cursor:pointer;
 }
 
@@ -384,12 +406,10 @@ h2{
     min-height: 100%;
     background-color: transparent;
     z-index: 2;
-    background-color: rgb(0, 0, 0, 0.1);
+    background-color: rgb(0, 0, 0, 0.5);
+    opacity: 0;
 
-    filter: blur(20px);
-    -webkit-filter: blur(20px);
-
-    transition: visibility 0.2s, filter 0.6s, -webkit-filter 0.6s;
+    transition: visibility 0.3s, opacity 0.3s;
 }
 
 .singleEditorPopup{
@@ -406,7 +426,8 @@ h2{
 }
 
 .lessonNameField{
-    font-family: 'heavy';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     border: none;
     outline: none;
     border-color: transparent;
@@ -420,7 +441,8 @@ h2{
 }
 
 .singleEditorField{
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     border: none;
     outline: none;
     border-color: transparent;
@@ -434,7 +456,8 @@ h2{
 }
 
 .singleEditorSegmentLabel{
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     font-variant-caps: all-small-caps;
     color: #8A8A8A;
     font-size: 0.9em;
@@ -443,7 +466,7 @@ h2{
 }
 
 .lilInfo{
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     color: #8A8A8A;
     font-size: 0.7em;
     margin-top: -7px;
@@ -465,7 +488,7 @@ h2{
 .optionalField{
     display: block;
     box-sizing: border-box;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     border: none;
     min-width: 150px;
     border-color: transparent; 
@@ -479,7 +502,7 @@ h2{
 
 .lilButton{
     box-sizing: border-box;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 0.95em;
     background-color: #eeeeee;
     border: none;
@@ -525,8 +548,9 @@ h2{
     border: none;
     border-radius: 7px;
     padding: 7px;
-    width: 55px;
-    font-family: 'semibold';
+    min-width: 55px;
+    font-family: 'Helvetica-Bold';
+    font-weight: bold;
     text-align: center;
     margin-right: 5px;
     transition: background-color 0.2s;
@@ -544,9 +568,10 @@ h2{
 }
 
 .lessonTitle{
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 0.7em;
     margin-bottom: 3px;
+    text-overflow: ellipsis;
 }
 
 .customTime{
@@ -558,7 +583,7 @@ h2{
 }
 
 .customTimeLabel {
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-variant-caps: all-small-caps;
 }
 
@@ -566,7 +591,8 @@ h2{
     display: block;
     outline: none;
     box-sizing: border-box;
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     width: 70px;
     font-size: 1.2em;
     height: 2em;
@@ -580,7 +606,83 @@ h2{
 .actionButtons{
     margin-top: 10px;
     width: 100%;
-    display: block;
+    display: flex;
+}
+
+.lilButton {
+    display: flex;
+    align-items: center;
+    font-family: sans-serif;
+    background-color: #eeeeee;
+    padding: 10px;
+    border-radius: 10px;
+    transition: max-width 0.2s, padding-left 0.2s, visibility 0.2s linear 0.2s, background-color 0.2s;
+}
+
+.lilTitle {
+    color: white;
+    padding-left: 0px;
+    max-width: 0px;
+    overflow: hidden;
+    transition: max-width 0.2s, padding-left 0.2s, linear 0.2s;
+}
+
+#doneButton{
+    margin-right: 8px;
+}
+
+#closeButton{
+    margin-left: 8px;
+}
+
+
+#doneButton:hover #doneTitle,
+#doneButton:hover ~ #doneTitle{
+    max-width: none;
+    padding-left: 5px;
+}
+#doneButton:hover {
+    background-color: green;
+    cursor: pointer;
+}
+
+#dupliButton:hover #dupliTitle,
+#dupliButton:hover ~ #dupliTitle{
+    max-width: none;
+    padding-left: 5px;
+}
+#dupliButton:hover {
+    background-color: #0072bc;
+    cursor: pointer;
+}
+
+#deleteButton{
+    float: right;
+    margin-left: auto;
+}
+
+#deleteButton:hover #deleteTitle,
+#deleteButton:hover ~ #deleteTitle{
+    max-width: none;
+    padding-right: 5px;
+}
+#deleteButton:hover {
+    background-color: red;
+    cursor: pointer;
+}
+
+#closeButton{
+    float: right;
+}
+
+#closeButton:hover #closeTitle,
+#closeButton:hover ~ #closeTitle{
+    color: black;
+    max-width: none;
+    padding-right: 5px;
+}
+#closeButton:hover {
+    cursor: pointer;
 }
 
 .deleteButton{
@@ -589,7 +691,7 @@ h2{
     background-color: red;
     color: white;
     box-sizing: border-box;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 0.95em;
     border: none;
     border-radius: 7px;
@@ -602,7 +704,7 @@ h2{
     width: 49%;
     color: white;
     box-sizing: border-box;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 0.95em;
     border: none;
     border-radius: 7px;
@@ -622,12 +724,13 @@ h2{
     min-height: 100%;
     background-color: transparent;
     z-index: 3;
-    background-color: rgb(0, 0, 0, 0.1);
+    background-color: rgb(0, 0, 0, 0.5);
 
-    filter: blur(20px);
-    -webkit-filter: blur(20px); 
+    /* filter: blur(20px);
+    -webkit-filter: blur(20px);  */
+    opacity: 0;
 
-    transition: visibility 0.2s, filter 0.5s, -webkit-filter 0.5s;
+    transition: visibility 0.3s, opacity 0.3s;
 }
 
 .alertPopup{
@@ -644,7 +747,7 @@ h2{
 .description{
     margin-top: 5px;
     margin-bottom: 10px;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 0.9em;
     cursor: default;
 }
@@ -661,12 +764,14 @@ h2{
     min-height: 100%;
     background-color: transparent;
     z-index: 2;
-    background-color: rgb(0, 0, 0, 0.1);
+    background-color: rgb(0, 0, 0, 0.5);
 
     /* filter: blur(20px);
     -webkit-filter: blur(20px);  */
 
-    transition: visibility 0.2s, filter 0.5s, -webkit-filter 0.5s;
+    opacity: 0;
+
+    transition: visibility 0.3s, filter 0.3s, -webkit-filter 0.3s, opacity 0.3s;
 }
 
 .popupContainer{
@@ -699,7 +804,7 @@ h2{
     width: 100%;
     box-sizing: border-box;
     margin-top: 10px;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 1em;
     padding: 7px;
     border: none;
@@ -714,7 +819,7 @@ h2{
     width: 100%;
     box-sizing: border-box;
     margin-top: 5px;
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     font-size: 1em;
     padding: 7px;
     border: none;
@@ -730,7 +835,7 @@ h2{
 }
 
 .postTTbutton{
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     box-sizing: border-box;
     font-size: 1em;
     padding: 7px;
@@ -744,7 +849,7 @@ h2{
 }
 
 .dismissCodeAlertButton{
-    font-family: 'regular';
+    /* font-family: 'Helvetica'; */
     box-sizing: border-box;
     font-size: 1em;
     padding: 7px;
@@ -774,7 +879,8 @@ h2{
 }
 
 .weekLabel{
-    font-family: 'semibold';
+    /* font-family: 'Helvetica-Bold'; */
+    font-weight: bold;
     padding-left: 30px;
     padding-right: 30px;
     font-size: 1em;
@@ -791,3 +897,94 @@ h2{
     margin-left: 20px;
     cursor: pointer;
 }
+
+.footer{
+    display: block;
+    background-color: #eeeeee;
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+.footer > div.row {
+    margin-bottom: 0px;
+}
+
+.sections {
+    margin-left: 30px;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.actualSection {
+    /* font-family: 'Helvetica'; */
+    color: white;
+    background-color: #3196da;
+    padding: 7px;
+    border-radius: 7px;
+    margin-right: 10px;
+}
+
+.anotherSection {
+    /* font-family: 'Helvetica'; */
+    background-color: #dadada;
+    padding: 7px;
+    border-radius: 7px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: black;
+}
+
+.credits{
+    margin-left: 30px;
+    color: #8A8A8A;
+    /* font-family: 'Helvetica'; */
+    font-size: small;
+}
+
+.hrefToGroup {
+    color: #8A8A8A;
+}
+
+a{
+    text-decoration: none;
+}
+
+.teachersContainer{
+    box-sizing: border-box;
+    display: flex;
+    font-family: sans-serif;
+    font-size: small;
+    width: 100%;
+    overflow-x: hidden;
+    max-height: 0px;
+    transition: overflow-x 0.2s, padding-bottom 0.2s, visibility 0.5s, max-height 0.5s;
+}
+
+.teachersContainer:hover {
+    overflow-x: auto;
+    padding-bottom: 1em;
+}
+
+.teacherButton{
+    box-sizing: border-box;
+    background-color: #eeeeee;
+    color: rgba(0, 0, 0, 0.6);
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 5px;
+    max-lines: 1;
+    overflow-block: ellipsis;
+    white-space: nowrap;
+
+    transition: background-color 0.35s, color 0.35s;
+}
+
+.teacherButton:hover{
+    background-color: #0072bc;
+    color: white;
+    cursor: pointer;
+}
+

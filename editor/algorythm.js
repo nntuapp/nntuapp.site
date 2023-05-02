@@ -1,4 +1,8 @@
 var tt = [];
+var teachers = [];
+var lessons = [];
+var teachersToShow = [];
+var lessonsToShow = [];
 
 var blurred = false;
 var userGroup = '';
@@ -95,6 +99,11 @@ class Lesson {
     };
 }
 
+Lesson.fromJSON = function(json){
+    const obj = JSON.parse(json)
+    return new Lesson(obj.startTime, obj.stopTime, obj.day, obj.weeks, obj.rooms, obj.name, obj.type, obj.teacher, obj.note)
+}
+
 function getGroup(cookiename = 'group') {
     var results = document.cookie.match ( '(^|;) ?' + cookiename + '=([^;]*)(;|$)' );
     if ( results )
@@ -121,7 +130,7 @@ function constructLesson(data){
 }
 
 function getLocalTT(key = 'tt'){
-    var saved = localStorage.getItem('tt');
+    var saved = localStorage.getItem(key);
     if (saved) {
         tempTT = JSON.parse(saved);
         for (i = 0; i < tempTT.length; i++){
@@ -134,6 +143,10 @@ function getLocalTT(key = 'tt'){
 }
 
 function getCard(lesson, lessonIndex){
+    if (lesson.name == "Сетевые технологии"){
+        console.log(lesson)
+    }
+    addTeachersAndLessonNames(lesson.name, lesson.teacher);
     if (lesson.weeks.includes(-1) && lesson.weeks.includes(-2)){
         return `<p><div class = "purpleCell" onclick = "editExistingOne(tt[${lessonIndex}], ${lessonIndex})">
             <div class = "table">
@@ -199,7 +212,7 @@ function getCard(lesson, lessonIndex){
 
 function weeksFromString(input){
     var weeks = [];
-    var tempString = input.replaceAll(' ', '');
+    var tempString = input.replace(/ /g, '');
     while (tempString.includes(',')){
         var index = tempString.indexOf(',');
         try {
@@ -264,10 +277,10 @@ function roomsFromString(input){
 }
 
 function estTimeFromString(input){
-    var tempString = input.replaceAll(':', '');
-    tempString = tempString.replaceAll(' ', '');
-    tempString = tempString.replaceAll(';', '');
-    tempString = tempString.replaceAll(',', '');
+    var tempString = input.replace(/:/g, '');
+    tempString = tempString.replace(/ /g, '');
+    tempString = tempString.replace(/;/g, '');
+    tempString = tempString.replace(/,/g, '');
     return parseInt(tempString);
 }
 
@@ -325,48 +338,50 @@ function showGroupPopup(active){
     if (active){
         // document.getElementById('haha').style.display = 'flex';
         document.getElementById('haha').style.visibility = 'visible';
+        document.getElementById('haha').style.opacity = '1';
         document.getElementById('haha').style.filter = 'none';
         document.getElementById('haha').style.webkitFilter = 'none';
     } else {
-        document.getElementById('haha').style.filter = 'blur(20px)';
-        document.getElementById('haha').style.webkitFilter = 'blur(20px)';
+        document.getElementById('haha').style.opacity = '0';
+        // document.getElementById('haha').style.filter = 'blur(20px)';
+        // document.getElementById('haha').style.webkitFilter = 'blur(20px)';
         // document.getElementById('haha').style.display = 'none';
         document.getElementById('haha').style.visibility = 'hidden';
     }
 }
 
 function blurCards(cardsArray, blur){
-    for (i = 0; i < cardsArray.length; i++){
-        if (blur){
-            cardsArray[i].style.filter = 'blur(8px)'
-        } else {
-            cardsArray[i].style.filter = 'none'
-        }
-    }
+    // for (i = 0; i < cardsArray.length; i++){
+    //     if (blur){
+    //         cardsArray[i].style.filter = 'blur(8px)'
+    //     } else {
+    //         cardsArray[i].style.filter = 'none'
+    //     }
+    // }
 }
 
 
 function blurMainInterface(active){
-    if (active){
-        document.getElementById('mainInterface').style.filter = 'blur(8px)';
-        document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
-        blurCards(document.getElementsByClassName('blueCell'), true);
-        blurCards(document.getElementsByClassName('redCell'), true);
-        blurCards(document.getElementsByClassName('purpleCell'), true);
-    } else {
-        document.getElementById('mainInterface').style.filter = 'none';
-        document.getElementById('mainInterface').style.webkitFilter = 'none';
-        blurCards(document.getElementsByClassName('blueCell'), false);
-        blurCards(document.getElementsByClassName('redCell'), false);
-        blurCards(document.getElementsByClassName('purpleCell'), false);
-    }
+    // if (active){
+    //     document.getElementById('mainInterface').style.filter = 'blur(8px)';
+    //     document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+    //     blurCards(document.getElementsByClassName('blueCell'), true);
+    //     blurCards(document.getElementsByClassName('redCell'), true);
+    //     blurCards(document.getElementsByClassName('purpleCell'), true);
+    // } else {
+    //     document.getElementById('mainInterface').style.filter = 'none';
+    //     document.getElementById('mainInterface').style.webkitFilter = 'none';
+    //     blurCards(document.getElementsByClassName('blueCell'), false);
+    //     blurCards(document.getElementsByClassName('redCell'), false);
+    //     blurCards(document.getElementsByClassName('purpleCell'), false);
+    // }
 }
 
 function applyGroup(){
     blurMainInterface(false);
     showGroupPopup(false);
     userGroup = document.getElementById('groupField').value;
-    userGroup = userGroup.replaceAll(' ', '-');
+    userGroup = userGroup.replace(/ /g, '-');
     userGroup = userGroup.toUpperCase();
     updateGroupLabel(userGroup);
     saveGroup(userGroup);
@@ -377,7 +392,7 @@ function askGroup(){
     document.getElementById('groupField').value = userGroup;
     document.getElementById('groupField').addEventListener("keyup", function(event){
         if (event.keyCode == 13){
-            document.getElementById('groupField').value = document.getElementById('groupField').value.replaceAll('\n', '');
+            document.getElementById('groupField').value = document.getElementById('groupField').value.replace(/\n/g, '');
             applyGroup();
         }
     });
@@ -404,7 +419,7 @@ function changeTempLessonRoom(){
                     tempLesson.startTime = sStartTimes[index];
                     tempLesson.stopTime = sStopTimes[index];
                 }
-            } else {
+            } else if (tempLesson.rooms[0].charAt(0) > '0' && tempLesson.rooms[0].charAt(0) < '6'){
                 fillTimes(true);
                 if (sStartTimes.includes(tempLesson.startTime) && sStopTimes.includes(tempLesson.stopTime)){
                     let index = sStartTimes.indexOf(tempLesson.startTime);
@@ -489,7 +504,7 @@ function colorizeWeeks(weeks){
     }
 
     if (weeks.includes(-1)){
-        document.getElementById('oddButton').style.backgroundColor = '#006CB2';
+        document.getElementById('oddButton').style.backgroundColor = '#CD2D09';
         document.getElementById('oddButton').style.color = 'white';
     } else {
         document.getElementById('oddButton').style.backgroundColor = '#eeeeee';
@@ -566,8 +581,8 @@ function setCustomTime(){
     tempLesson.stopTime = document.getElementById('customStopTime').value;
     tempLesson.startTime = cleanUpString(tempLesson.startTime);
     tempLesson.stopTime = cleanUpString(tempLesson.stopTime);
-    tempLesson.startTime = tempLesson.startTime.replaceAll(' ',':').replaceAll('.', ':').replaceAll(',',':').replaceAll(';',':');
-    tempLesson.stopTime = tempLesson.stopTime.replaceAll(' ',':').replaceAll('.', ':').replaceAll(',',':').replaceAll(';',':');
+    tempLesson.startTime = tempLesson.startTime.replace(/ /g,':').replace(/\./g, ':').replace(/,/g,':').replace(/;/g,':');
+    tempLesson.stopTime = tempLesson.stopTime.replace(/ /g,':').replace(/\./g, ':').replace(/,/g,':').replace(/;/g,':');
 }
 
 function emptyEditorPopup() {
@@ -587,7 +602,16 @@ function emptyEditorPopup() {
     document.getElementById('customWeeks').value = '';
 }
 
-function saveButton(){
+function addTeachersAndLessonNames(name, teacher){
+    if (!teachers.includes(teacher)){
+        teachers.push(teacher)
+    }
+    if (!lessons.includes(name)){
+        lessons.push(name)
+    }
+}
+
+function saveButton(withDupl){
     let status = checkIfComplete();
     if (status == 0){
         if (tempLessonIndex != -1){
@@ -595,6 +619,15 @@ function saveButton(){
         } else {
             tt.push(tempLesson);
         }
+        if (withDupl){
+            const json = JSON.stringify(tempLesson)
+            console.log("\n")
+            const duplicate = Lesson.fromJSON(json)
+            console.log(duplicate)
+            console.log("\n")
+            tt.push(duplicate)
+        }
+        // addTeachersAndLessonNames(tempLesson.name, tempLesson.teacher);
         tempLesson = new Lesson();
         tempLesson.emptyFill();
         saveTTLocally(tt);
@@ -606,12 +639,13 @@ function saveButton(){
     }
 }
 
-function deleteButton() {
-    if (tempLessonIndex != -1){
+function closeButton(deleting) {
+    if (tempLessonIndex != -1 && deleting){
         tt.splice(tempLessonIndex,1);
+        saveTTLocally(tt);
         tempLessonIndex = -1;
-        fillIn();
     }
+    fillIn();
     tempLesson = new Lesson();
     tempLesson.emptyFill();
     showEditor(false);
@@ -619,16 +653,20 @@ function deleteButton() {
     emptyEditorPopup();
 }
 
+
+
 function showEditor(active) {
     if (active){
         // document.getElementById('haha').style.display = 'flex';
         document.getElementById('singleEditorBackground').style.visibility = 'visible';
         document.getElementById('singleEditorBackground').style.filter = 'none';
         document.getElementById('singleEditorBackground').style.webkitFilter = 'none';
+        document.getElementById('singleEditorBackground').style.opacity = '1';
     } else {
         tempLessonIndex = -1;
-        document.getElementById('singleEditorBackground').style.filter = 'blur(20px)';
-        document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(20px)';
+        document.getElementById('singleEditorBackground').style.opacity = '0';
+        // document.getElementById('singleEditorBackground').style.filter = 'blur(20px)';
+        // document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(20px)';
         // document.getElementById('haha').style.display = 'none';
         document.getElementById('singleEditorBackground').style.visibility = 'hidden';
     }
@@ -643,7 +681,7 @@ function newLesson(){
 function editExistingOne(lesson, lessonIndex){
     emptyEditorPopup();
     tempLessonIndex = lessonIndex;
-    tempLesson = lesson;
+    tempLesson = Lesson.fromJSON(JSON.stringify(lesson));
 
 
     chooseType(lesson.type);
@@ -685,17 +723,21 @@ function editExistingOne(lesson, lessonIndex){
 }
 
 function dismiss() {
-    document.getElementById('singleEditorBackground').style.filter = 'blur(20px)';
-    document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(20px)';
+    document.getElementById('singleEditorBackground').style.opacity = '0';
+    document.getElementById('haha').style.opacity = '0';
+    document.getElementById('errorAlert').style.opacity = '0';
+    document.getElementById('codePopupBackground').style.opacity = '0';
+    // document.getElementById('singleEditorBackground').style.filter = 'blur(20px)';
+    // document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(20px)';
     document.getElementById('singleEditorBackground').style.visibility = 'hidden';
-    document.getElementById('haha').style.filter = 'blur(20px)';
-    document.getElementById('haha').style.webkitFilter = 'blur(20px)';
+    // document.getElementById('haha').style.filter = 'blur(20px)';
+    // document.getElementById('haha').style.webkitFilter = 'blur(20px)';
     document.getElementById('haha').style.visibility = 'hidden';
-    document.getElementById('errorAlert').style.filter = 'blur(20px)';
-    document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    // document.getElementById('errorAlert').style.filter = 'blur(20px)';
+    // document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
     document.getElementById('errorAlert').style.visibility = 'hidden';
-    document.getElementById('codePopupBackground').style.filter = 'blur(20px)';
-    document.getElementById('codePopupBackground').style.webkitFilter = 'blur(20px)';
+    // document.getElementById('codePopupBackground').style.filter = 'blur(20px)';
+    // document.getElementById('codePopupBackground').style.webkitFilter = 'blur(20px)';
     document.getElementById('codePopupBackground').style.visibility = 'hidden'
     blurMainInterface(false);
 }
@@ -714,24 +756,26 @@ function checkIfComplete(){
 }
 
 function showAlert(messageID, fLevel = false){
-    blur2level(true);
-    document.getElementById('errorAlert').style.filter = 'none';
-    document.getElementById('errorAlert').style.webkitFilter = 'none';
-    document.getElementById('errorAlert').style.visibility = 'visible';
-    document.getElementById('mainInterface').style.filter = 'blur(16px)';
-    document.getElementById('mainInterface').style.webkitFilter = 'blur(16px)';
+    // blur2level(true);
     document.getElementById('alertText').innerHTML = messages[messageID];
     document.getElementById('alertDescription').innerHTML = descriptions[messageID];
+
+
+    // document.getElementById('errorAlert').style.filter = 'none';
+    // document.getElementById('errorAlert').style.webkitFilter = 'none';
+    document.getElementById('errorAlert').style.visibility = 'visible';
+    document.getElementById('errorAlert').style.opacity = '1';
     isFLevelAlert = fLevel
 }
 
 function dismissAlert(){
     blur2level(false);
-    document.getElementById('errorAlert').style.filter = 'blur(20px)';
-    document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    // document.getElementById('errorAlert').style.filter = 'blur(20px)';
+    // document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    document.getElementById('errorAlert').style.opacity = '0';
     document.getElementById('errorAlert').style.visibility = 'hidden';
-    document.getElementById('mainInterface').style.filter = 'blur(8px)';
-    document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+    // document.getElementById('mainInterface').style.filter = 'blur(8px)';
+    // document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
     if (uploading){
         uploading = false;
         showCodePopup(false);
@@ -745,10 +789,10 @@ function dismissAlert(){
 
 function blur2level(toBlur){
     if (toBlur){
-        document.getElementById('singleEditorBackground').style.filter = 'blur(8px)';
-        document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(8px)';
-        document.getElementById('codePopupBackground').style.filter = 'blur(8px)';
-        document.getElementById('codePopupBackground').style.webkitFilter = 'blur(8px)';
+        // document.getElementById('singleEditorBackground').style.filter = 'blur(8px)';
+        // document.getElementById('singleEditorBackground').style.webkitFilter = 'blur(8px)';
+        // document.getElementById('codePopupBackground').style.filter = 'blur(8px)';
+        // document.getElementById('codePopupBackground').style.webkitFilter = 'blur(8px)';
     } else {
         document.getElementById('singleEditorBackground').style.filter = 'none';
         document.getElementById('singleEditorBackground').style.webkitFilter = 'none';
@@ -770,9 +814,11 @@ function showCodePopup(toShow){
         document.getElementById('codePopupBackground').style.filter = 'none';
         document.getElementById('codePopupBackground').style.webkitFilter = 'none';
         document.getElementById('codePopupBackground').style.visibility = 'visible'
+        document.getElementById('codePopupBackground').style.opacity = '1'
     } else {
-        document.getElementById('codePopupBackground').style.filter = 'blur(20px)';
-        document.getElementById('codePopupBackground').style.webkitFilter = 'blur(20px)';
+        // document.getElementById('codePopupBackground').style.filter = 'blur(20px)';
+        // document.getElementById('codePopupBackground').style.webkitFilter = 'blur(20px)';
+        document.getElementById('codePopupBackground').style.opacity = '0'
         document.getElementById('codePopupBackground').style.visibility = 'hidden'
     }
 }
@@ -830,6 +876,7 @@ function upload(code, group = userGroup){
     request.open("POST", address, true);
     request.setRequestHeader('Content-Type', 'application/json');
     request.onreadystatechange = function(){
+        console.log(this)
         if (this.status == 401){
             showAlert(5);
         } else if (this.status == 200){
@@ -864,6 +911,8 @@ function init(){
         updateGroupLabel(userGroup);
         getLocalTT();
     }
+    
+    loadTeachers()
 }
 
 
@@ -908,24 +957,149 @@ const mouseUpHandler = function(){
     document.getElementById('days').style.cursor = 'grab';
     document.getElementById('days').style.removeProperty('user-select');
     document.removeEventListener('mousemove', mouseMoveHandler);
-    let inert = setInterval(function(){
-        const dt = 16;
-        if (pos.speed == 0){
-            clearInterval(inert);
-        } else {
-            pos.speed += pos.acc*dt;
-            if (pos.acc > 9.8/1000*dt){
-                pos.acc -= 9.8/1000*dt;
-            } else if (pos.acc < -9.8/1000*dt) {
-                pos.acc += 9.8/1000*dt;
-            } else {
-                pos.acc = 0;
-            }
-            let newLeft = pos.left + pos.speed*dt;
-            pos.speed = (document.getElementById('days').scrollLeft - pos.left)/dt;
-            pos.left = newLeft;
-            document.getElementById('days').scrollLeft = pos.left;
-            console.log(pos.left);
+    // let inert = setInterval(function(){
+    //     const dt = 16;
+    //     if (pos.speed == 0){
+    //         clearInterval(inert);
+    //     } else {
+    //         pos.speed += pos.acc*dt;
+    //         let newLeft = pos.left + pos.speed*dt;
+    //         pos.speed = (document.getElementById('days').scrollLeft - pos.left)/dt;
+    //         pos.left = newLeft;
+    //         document.getElementById('days').scrollLeft = pos.left;
+    //         console.log(pos.speed);
+    //     }
+    // }, 16);
+}
+
+
+
+function findSuggestions(keyword){
+    var output = []
+    for (i = 0; i < teachers.length; i ++){
+        if (teachers[i].toUpperCase().includes(keyword.toUpperCase())){
+            output.push(teachers[i])
         }
-    }, 16);
+        if (output.length == 10){break}
+    }
+    teachersToShow = output
+}
+
+function showSuggestions(){
+    var shouldHide = (teachersToShow.length == 0) || (document.getElementById("teacherField").value == "") || (teachersToShow.length == 1 && document.getElementById("teacherField").value == teachersToShow[0])
+    if (shouldHide){
+        document.getElementById('teachersContainer').style.maxHeight = '0px'
+        document.getElementById('teachersContainer').style.visibility = 'hidden'
+    } else {
+        document.getElementById('teachersContainer').style.visibility = 'visible'
+        document.getElementById('teachersContainer').style.maxHeight = '1000px'
+    }
+    var htmlTeachers = []
+    for (i = 0; i < teachersToShow.length; i ++){
+        htmlTeachers.push(`<div class = "teacherButton" onclick = "chooseSuggestion(this.innerHTML)">${teachersToShow[i]}</div>`)
+    }
+    document.getElementById('teachersContainer').innerHTML = htmlTeachers.join('')
+}
+
+function newKeyWord(element){
+    const keyword = element.value
+    findSuggestions(keyword)
+    showSuggestions()
+    setTempTeacher()
+}
+
+function chooseSuggestion(newTeacher){
+    document.getElementById("teacherField").value = newTeacher
+    findSuggestions(newTeacher)
+    showSuggestions()
+    setTempTeacher()
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const badData = ["", "Экологи", "Знания","Часть 1","Часть 2", "Материаловение", "Иностраннный язык", "Часть 2. Дискретная математика"]
+function clearBadData(){
+    for (i = 0; i < badData.length; i ++){
+        if (lessons.includes(badData[i])){
+            lessons.splice(lessons.indexOf(badData[i]), 1)
+        }
+    }
+}
+
+function findLessonSuggestions(keyword){
+    var output = []
+    for (i = 0; i < lessons.length; i ++){
+        if (lessons[i].toUpperCase().includes(keyword.toUpperCase())){
+            output.push(lessons[i])
+        }
+        if (output.length == 10){break}
+    }
+    lessonsToShow = output
+}
+
+function showLessonSuggestions(){
+    var shouldHide = (lessonsToShow.length == 0) || (document.getElementById("lessonNameField").value == "") || (lessonsToShow.includes(document.getElementById("lessonNameField").value))
+    if (shouldHide){
+        document.getElementById('lessonsContainer').style.maxHeight = '0px'
+        document.getElementById('lessonsContainer').style.visibility = 'hidden'
+    } else {
+        document.getElementById('lessonsContainer').style.visibility = 'visible'
+        document.getElementById('lessonsContainer').style.maxHeight = '1000px'
+    }
+    var htmlLessons = []
+    for (i = 0; i < lessonsToShow.length; i ++){
+        htmlLessons.push(`<div class = "teacherButton" onclick = "chooseLessonSuggestion(this.innerHTML)">${lessonsToShow[i]}</div>`)
+    }
+    document.getElementById('lessonsContainer').innerHTML = htmlLessons.join('')
+}
+
+function chooseLessonSuggestion(newLesson){
+    document.getElementById("lessonNameField").value = newLesson
+    findLessonSuggestions(newLesson)
+    showLessonSuggestions()
+    changeTempLessonName()
+}
+
+function newKeyLesson(element){
+    const keyword = element.value
+    findLessonSuggestions(keyword)
+    showLessonSuggestions()
+    changeTempLessonName()
+}
+
+function loadTeachers(){
+    const request = new XMLHttpRequest()
+    request.open("GET", "http://nntuapp.ru/teachers.json", true)
+    request.onload = function(){
+        if (request.status >= 200 && request.status < 400){
+            // Success!
+            data = JSON.parse(request.responseText);
+            for (i = 0; i < data.length; i ++){
+                var counter = data[i]
+                teachers.push(counter.name)
+                var disc = counter.disciplines
+                if (disc){
+                    var tempLessons = disc.split(/(?:,|;)+/).map(function(el){
+                        var output = el.replace(/}/g,")")
+                        output = output.replace(/{/g, "(")
+                        output = output.replace(/"/g,"")
+                        output = output.trim()
+                        return capitalizeFirstLetter(output)
+                    })
+                    if (tempLessons != [""]){
+                        lessons = lessons.concat(tempLessons)
+                    }
+                }
+            }
+            lessons = [...new Set(lessons)].sort(function(a, b){
+                return a.length - b.length;
+            })
+            clearBadData()
+          } else {
+            console.log("no connection")
+          }
+    }
+    request.send()
 }

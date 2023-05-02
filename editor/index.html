@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="icons/editorIcon.png" type = "image/png">
     <link rel="stylesheet" href="style.css">
-    <title>Редактор расписания (бета)</title>
+    <title>Редактор расписания</title>
     <script src="algorythm.js"></script>
     <script src="keys.js"></script>
 </head>
@@ -44,7 +44,9 @@
     </div>
     <div id = 'singleEditorBackground' class = 'singleEditorBackground'>
         <div class = 'singleEditorPopup'>
-            <textarea class = 'lessonNameField' id = 'lessonNameField' placeholder="Название" oninput="changeTempLessonName()"></textarea>
+            <input type="text" class = 'lessonNameField' id = 'lessonNameField' placeholder="Название" oninput="newKeyLesson(this)">
+            <div class = "teachersContainer" id = "lessonsContainer">
+            </div>
             <div class = 'singleEditorSegmentLabel'>Тип занятия</div>
             <div class = 'lilButtons'>
                 <button id = 'lectureButton' onclick = "setType('Лекция')" class = 'lilButton'>Лекция</button>
@@ -126,11 +128,29 @@
                 <button id = 'wday5' onclick="setDay(5)" class = 'lilButton'>Сб</button>
                 <button id = 'wday6' onclick="setDay(6)" class = 'lilButton'>Вс</button>
             </div>
-            <textarea id = 'teacherField' class = 'singleEditorField' placeholder="Преподаватель" oninput="setTempTeacher()"></textarea> <br>
+            <textarea id = 'teacherField' class = 'singleEditorField' placeholder="Преподаватель" oninput="newKeyWord(this)"></textarea> <br>
+            <div class = "teachersContainer" id = "teachersContainer"></div>
             <textarea id = 'notesField' class = 'singleEditorField' placeholder="Заметки" oninput="setTempNotes()"></textarea>
             <div class = 'actionButtons'>
-                <button class = 'saveButton' onclick="saveButton()">Применить</button>
-                <button class = 'deleteButton' onclick="deleteButton()">Удалить</button>
+                <div class = "lilButton" id = "doneButton" onclick="saveButton(false)">
+                    <div class = "lilIcon">✅</div>
+                    <div class = "lilTitle" id="doneTitle">Готово</div>
+                </div>
+                <div class = "lilButton" id = "dupliButton" onclick="saveButton(true)">
+                    <div class = "lilIcon">📄 📄</div>
+                    <div class = "lilTitle" id="dupliTitle">Дублировать</div>
+                </div>
+                <div class = "lilButton" id = "deleteButton" onclick="closeButton(true)">
+                    <div class = "lilTitle" id="deleteTitle">Удалить</div>
+                    <div class = "lilIcon">❎</div>
+                </div>
+
+                <div class = "lilButton" id = "closeButton" onclick="closeButton(false)">
+                    <div class = "lilTitle" id="closeTitle">Назад</div>
+                    <div class = "lilIcon">↩️</div>
+                </div>
+                <!-- <button class = 'saveButton' onclick="saveButton()">Применить</button>
+                <button class = 'deleteButton' onclick="deleteButton()">Удалить</button> -->
             </div>
         </div>
     </div>
@@ -180,6 +200,20 @@
                     <cell id='day6' class='lessonCell'/>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class = "footer">
+        <div class = "sections">
+            <a href = "http://nntuapp.ru"><div class = "anotherSection">Расписание</div></a>
+            <div class = "actualSection">
+                Редактор расписания
+            </div>
+            <a href = "http://nntuapp.ru/events"><div class = "anotherSection">События</div></a>
+        </div>
+        <div class = "credits">
+            <a class = "hrefToGroup" href = "https://vk.com/nntuapp">Приложение НГТУ</a> <br>
+            Шерстнев Алексей <br>
+            Дмитрий Юдин <br>
         </div>
     </div>
 </body>

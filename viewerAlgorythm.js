@@ -1,4 +1,8 @@
-const firstWeekInCalendar = 5;
+//Неделя, соответствующая первой (или нулевой) в календаре
+const firstWeekInCalendar = 35;
+
+//Неделя, первая в учебном календаре (начинается с нуля или с единицы)
+const additionalWeek = 1;
 
 var tt = [];
 var blurred = false;
@@ -135,7 +139,7 @@ function getCard(lesson, lessonIndex){
 
 function weeksFromString(input){
     var weeks = [];
-    var tempString = input.replaceAll(' ', '');
+    var tempString = input.replace(/ /g, '');
     while (tempString.includes(',')){
         var index = tempString.indexOf(',');
         try {
@@ -202,10 +206,10 @@ function roomsFromString(input){
 }
 
 function estTimeFromString(input){
-    var tempString = input.replaceAll(':', '');
-    tempString = tempString.replaceAll(' ', '');
-    tempString = tempString.replaceAll(';', '');
-    tempString = tempString.replaceAll(',', '');
+    var tempString = input.replace(/:/g, '');
+    tempString = tempString.replace(/ /g, '');
+    tempString = tempString.replace(/;/g, '');
+    tempString = tempString.replace(/,/g, '');
     return parseInt(tempString);
 }
 
@@ -268,46 +272,48 @@ function showGroupPopup(active){
         document.getElementById('haha').style.visibility = 'visible';
         document.getElementById('haha').style.filter = 'none';
         document.getElementById('haha').style.webkitFilter = 'none';
+        document.getElementById('haha').style.opacity = '1';
     } else {
-        document.getElementById('haha').style.filter = 'blur(20px)';
-        document.getElementById('haha').style.webkitFilter = 'blur(20px)';
+        document.getElementById('haha').style.opacity = '0';
+        // document.getElementById('haha').style.filter = 'blur(20px)';
+        // document.getElementById('haha').style.webkitFilter = 'blur(20px)';
         // document.getElementById('haha').style.display = 'none';
         document.getElementById('haha').style.visibility = 'hidden';
     }
 }
 
 function blurCards(cardsArray, blur){
-    for (i = 0; i < cardsArray.length; i++){
-        if (blur){
-            cardsArray[i].style.filter = 'blur(8px)'
-        } else {
-            cardsArray[i].style.filter = 'none'
-        }
-    }
+    // for (i = 0; i < cardsArray.length; i++){
+    //     if (blur){
+    //         cardsArray[i].style.filter = 'blur(8px)'
+    //     } else {
+    //         cardsArray[i].style.filter = 'none'
+    //     }
+    // }
 }
 
 
 function blurMainInterface(active){
-    if (active){
-        document.getElementById('mainInterface').style.filter = 'blur(8px)';
-        document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
-        blurCards(document.getElementsByClassName('blueCell'), true);
-        blurCards(document.getElementsByClassName('redCell'), true);
-        blurCards(document.getElementsByClassName('purpleCell'), true);
-    } else {
-        document.getElementById('mainInterface').style.filter = 'none';
-        document.getElementById('mainInterface').style.webkitFilter = 'none';
-        blurCards(document.getElementsByClassName('blueCell'), false);
-        blurCards(document.getElementsByClassName('redCell'), false);
-        blurCards(document.getElementsByClassName('purpleCell'), false);
-    }
+    // if (active){
+    //     document.getElementById('mainInterface').style.filter = 'blur(8px)';
+    //     document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+    //     blurCards(document.getElementsByClassName('blueCell'), true);
+    //     blurCards(document.getElementsByClassName('redCell'), true);
+    //     blurCards(document.getElementsByClassName('purpleCell'), true);
+    // } else {
+    //     document.getElementById('mainInterface').style.filter = 'none';
+    //     document.getElementById('mainInterface').style.webkitFilter = 'none';
+    //     blurCards(document.getElementsByClassName('blueCell'), false);
+    //     blurCards(document.getElementsByClassName('redCell'), false);
+    //     blurCards(document.getElementsByClassName('purpleCell'), false);
+    // }
 }
 
 function applyGroup(){
     blurMainInterface(false);
     showGroupPopup(false);
     userGroup = document.getElementById('groupField').value;
-    userGroup = userGroup.replaceAll(' ', '-');
+    userGroup = userGroup.replace(/ /g, '-');
     userGroup = userGroup.toUpperCase();
     updateGroupLabel(userGroup);
     saveGroup(userGroup);
@@ -318,7 +324,7 @@ function askGroup(){
     document.getElementById('groupField').value = userGroup;
     document.getElementById('groupField').addEventListener("keyup", function(event){
         if (event.keyCode == 13){
-            document.getElementById('groupField').value = document.getElementById('groupField').value.replaceAll('\n', '');
+            document.getElementById('groupField').value = document.getElementById('groupField').value.replace(/\n/g, '');
             applyGroup();
         }
     });
@@ -327,7 +333,7 @@ function askGroup(){
 }
 
 function getNowWeek(){
-    return new Date().getWeekNumber() - firstWeekInCalendar;
+    return new Date().getWeekNumber() - firstWeekInCalendar + additionalWeek;
 }
 
 function updateWeekLabel(){
@@ -335,7 +341,7 @@ function updateWeekLabel(){
 }
 
 function updateWeek(){
-    if (nowWeek <= 1) {nowWeek = 1;}
+    if (nowWeek <= additionalWeek) {nowWeek = additionalWeek;}
     updateWeekLabel();
     fillIn();
 }
@@ -351,25 +357,27 @@ function prevWeek(){
 }
 
 function openEditor(){
-    window.open('/editor/editor.html');
+    window.open('/editor');
 }
 
 function showAlert(messageID){
     document.getElementById('errorAlert').style.filter = 'none';
     document.getElementById('errorAlert').style.webkitFilter = 'none';
     document.getElementById('errorAlert').style.visibility = 'visible';
-    document.getElementById('mainInterface').style.filter = 'blur(16px)';
-    document.getElementById('mainInterface').style.webkitFilter = 'blur(16px)';
+    document.getElementById('errorAlert').style.opacity = '1';
+    // document.getElementById('mainInterface').style.filter = 'blur(16px)';
+    // document.getElementById('mainInterface').style.webkitFilter = 'blur(16px)';
     document.getElementById('alertText').innerHTML = messages[messageID];
     document.getElementById('alertDescription').innerHTML = descriptions[messageID];
 }
 
 function dismissAlert(){
-    document.getElementById('errorAlert').style.filter = 'blur(20px)';
-    document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    // document.getElementById('errorAlert').style.filter = 'blur(20px)';
+    // document.getElementById('errorAlert').style.webkitFilter = 'blur(20px)';
+    document.getElementById('errorAlert').style.opacity = '0';
     document.getElementById('errorAlert').style.visibility = 'hidden';
-    document.getElementById('mainInterface').style.filter = 'blur(8px)';
-    document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
+    // document.getElementById('mainInterface').style.filter = 'blur(8px)';
+    // document.getElementById('mainInterface').style.webkitFilter = 'blur(8px)';
     blurMainInterface(false);
 }
 

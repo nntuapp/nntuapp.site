@@ -1,0 +1,35 @@
+html {
+    margin: none;
+    display: flex;
+}
+
+#lilButton {
+    display: flex;
+    align-items: center;
+    font-family: sans-serif;
+    background-color: #eeeeee;
+    padding: 7px;
+    border-radius: 10px;
+    transition: max-width 0.35s, padding-left 0.35s, visibility 0.35s linear 0.35s, background-color 0.35s;
+}
+
+#lilTitle {
+    color: white;
+    padding-left: 0px;
+    max-width: 0px;
+    overflow: hidden;
+    transition: max-width 0.35s, padding-left 0.35s, linear 0.35s;
+}
+
+
+#lilButton:hover #lilTitle,
+#lilButton:hover ~ #lilTitle{
+    max-width: none;
+    padding-left: 5px;
+}
+
+#lilButton:hover{
+    background-color: green;
+    cursor: pointer;
+}
+
